@@ -76,27 +76,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Cactus: Auto Drive By Gyro", group = "Cactus")
-@Disabled
+@Autonomous(name = "Cactus: Auto Drive By IMU Gyro", group = "Cactus")
 public class AutoDrive extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwarePushbot robot = new HardwarePushbot();   // Use a Pushbot's hardware
+    CactusRobot robot = new CactusRobot();   // Use a Pushbot's hardware
+
     //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
     private BNO055IMU imu;
     private BNO055IMU.Parameters imuParameters;
 
-
-    static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
-    static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
+    static final double DRIVE_SPEED = .4;     // Nominal speed for better accuracy.
+    static final double TURN_SPEED = .3;     // Nominal half speed for better accuracy.
 
     static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
@@ -138,7 +137,7 @@ public class AutoDrive extends LinearOpMode {
         // sleep(50);
         //idle();
         //}
-        sleep(1000);
+
         imu.startAccelerationIntegration(null, null, 1000);
 
         telemetry.addData(">", "Robot Ready.");    //
@@ -149,11 +148,11 @@ public class AutoDrive extends LinearOpMode {
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
-//            telemetry.addData(">", "Robot Heading = %d", gyro.getIntegratedZValue());
+//            telemetry.addData(">", "Robot Heading = %d", imu.getIntegratedZValue());
             telemetry.update();
         }
 
-//        gyro.resetZAxisIntegrator();
+//       imu.resetZAxisIntegrator();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -197,6 +196,7 @@ public class AutoDrive extends LinearOpMode {
         double steer;
         double leftSpeed;
         double rightSpeed;
+
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
@@ -365,7 +365,7 @@ public class AutoDrive extends LinearOpMode {
         Orientation angles;
 
         // calculate error in -179 to +180 range  (
-        //robotError = targetAngle - gyro.getIntegratedZValue();
+        //robotError = targetAngle - imu.getIntegratedZValue();
         angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         robotError = targetAngle - angles.firstAngle;
         while (robotError > 180) robotError -= 360;
