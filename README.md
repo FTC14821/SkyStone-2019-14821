@@ -1,3 +1,23 @@
+## FTC14821 Skystone 2019 robot team code
+
+This repository was originally forked from https://github.com/FIRST-Tech-Challenge/SkyStone and then modified with the team specific code.
+
+Every once in awhile, do these steps in the Terminal
+```
+git add --all
+git commit -m "Some message about what changed"
+git push
+```
+
+If, **AFTER A COMMIT AND PUSH** we need to add updates from the FIRST source back into our project, you can do it one of multiple ways that are documented at
+https://stackoverflow.com/questions/3903817/pull-new-updates-from-original-github-repository-into-forked-github-repository
+
+```
+git fetch upstream
+git merge upstream/master master
+```
+
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the SKYSTONE (2019-2020) competition season.  
