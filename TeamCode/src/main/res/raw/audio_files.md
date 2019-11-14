@@ -5,4 +5,4 @@ Use the "say" command with the following options
 * -o output.wav
 * required for .wav files : --data-format=LEF32@22050
 
-say -v Samantha -o stone-detected.wav --data-format=LEF32@22050 "Skystone Detected"
+say -v Samantha -o stone_detected.wav --data-format=LEF32@22050 "Skystone Detected"
