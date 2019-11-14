@@ -14,7 +14,13 @@ https://stackoverflow.com/questions/3903817/pull-new-updates-from-original-githu
 
 ```
 git fetch upstream
+
+# then: (like "git pull" which is fetch + merge)
 git merge upstream/master master
+
+# or, better, replay your local work on top of the fetched branch
+# like a "git pull --rebase"
+git rebase upstream/master
 ```
 
 
