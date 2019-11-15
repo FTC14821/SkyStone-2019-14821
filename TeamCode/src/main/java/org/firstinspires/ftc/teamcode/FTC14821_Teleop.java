@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,15 +10,20 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
 
 @TeleOp(name = "FTC 14821 Teleop", group = "")
 public class FTC14821_Teleop extends LinearOpMode {
 
     // create an instance of our robot hardware
     CactusRobot robot = new CactusRobot();
+    RobotSettings settings = new RobotSettings();
 
     private static final double fastSpeed = 0.6;
     private static final double slowSpeed = 0.4;
@@ -64,8 +71,14 @@ public class FTC14821_Teleop extends LinearOpMode {
     public void runOpMode() {
 
         double driveSpeedScale;
+        boolean savingSettings = false;
 
         robot.init(hardwareMap);
+        /*
+        * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
+        * TODO Use the values from the settings object in the rest of our code
+         */
+        settings.readSettings();
 
         // Put initialization blocks here.
         initialize();
@@ -73,13 +86,25 @@ public class FTC14821_Teleop extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
+                // Hold "start", "back" and "y" to save current settings
+                // This will just overwrite any file that's out there with the current settings
+                // Which wil save the defaults if no file exists or the currently loaded settings if it did at startup
+                if (gamepad1.start && gamepad1.back && gamepad1.y) {
+                    if (!savingSettings) {
+                        settings.writeSettings();
+                        Log.d("CACTUS", "Saved Settings: ");
+                        savingSettings = true;
+                    }
+                } else {
+                    savingSettings = false;
+                }
                 // Put loop blocks here.
                 if (gamepad1.left_bumper) {
                     // Drive SLOW mode (normal)
-                    driveSpeedScale = slowSpeed;
+                    driveSpeedScale = settings.teleSlowSpeed;
                 } else {
                     // Drive FAST mode
-                    driveSpeedScale = fastSpeed;
+                    driveSpeedScale = settings.teleFastSpeed;
                 }
 
                 robot.leftDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
