@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.drawable.GradientDrawable;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorREVColorDistance;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 
@@ -32,6 +35,8 @@ public class CactusRobot {
     public DcMotor fangs = null;
     public CRServo leftGripper = null;
     public CRServo rightGripper = null;
+    public ColorSensor forwardColor = null;
+    public DistanceSensor forwardDistance = null;
 
     HardwareMap hwMap = null;
 
@@ -44,6 +49,10 @@ public class CactusRobot {
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
+
+        // Color Sensor
+        forwardColor = hwMap.get(ColorSensor.class, "forwardColorDistance");
+        forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
 
         // Define and Initialize Motors
         leftDrive = hwMap.get(DcMotor.class, "leftDrive");
