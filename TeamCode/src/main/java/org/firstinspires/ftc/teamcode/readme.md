@@ -1,3 +1,12 @@
+## Deploying via wifi...
+
+Connect to the phone via wifi Direct
+```
+``$ ~/Library/Android/sdk/platform-tools/adb tcpip 5555
+restarting in TCP mode port: 5555
+$ ~/Library/Android/sdk/platform-tools/adb connect 192.168.49.1:5555
+```
+
 ## TeamCode Module
 
 Welcome!

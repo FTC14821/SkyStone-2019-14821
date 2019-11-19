@@ -75,8 +75,8 @@ public class FTC14821_Teleop extends LinearOpMode {
 
         robot.init(hardwareMap);
         /*
-        * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
-        * TODO Use the values from the settings object in the rest of our code
+         * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
+         * TODO Use the values from the settings object in the rest of our code
          */
         settings.readSettings();
 
