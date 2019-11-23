@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.util.ReadWriteFile;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -22,6 +23,7 @@ public class RobotSettings {
 
 //    public static String settingsFileName = "CactusRobotSettings.json";
 
+    private final static String SETTINGS_FILE = "CactusRobotSettings.json";
     public int version = 1;  //version of this class
     public double teleFastSpeed = 0.7;  //fast drive speed for teleOp
     public double teleSlowSpeed = 0.4;  //slow drive speed for teleop
@@ -41,27 +43,30 @@ public class RobotSettings {
     }
 
     public void readSettings() {
-        String filename = "CactusRobotSettings.json";
-        File file = AppUtil.getInstance().getSettingsFile(filename);
-        String data = ReadWriteFile.readFile(file);
-        Log.d("CACTUS", "Loaded Settings: ");
-        RobotSettings x = SimpleGson.getInstance().fromJson(data, RobotSettings.class);
-        this.teleFastSpeed = x.teleFastSpeed;
-        this.teleSlowSpeed = x.teleSlowSpeed;
-        this.autoDriveSpeed = x.autoDriveSpeed;
-        this.autoTurnSpeed = x.autoTurnSpeed;
-        this.autoHeadingThreshold = x.autoHeadingThreshold;
-        this.autoTurnCoefficient = x.autoTurnCoefficient;
-        this.autoDriveCoefficient = x.autoDriveCoefficient;
-        this.driveEncoderCountsPerRev = x.driveEncoderCountsPerRev;
-        this.driveGearRatio = x.driveGearRatio;
-        this.driveWheelDiameter = x.driveWheelDiameter;
-
+        try {
+            File file = AppUtil.getInstance().getSettingsFile(this.SETTINGS_FILE);
+            String data = ReadWriteFile.readFile(file);
+            Log.d("CACTUS", "Loaded Settings: ");
+            RobotSettings x = SimpleGson.getInstance().fromJson(data, RobotSettings.class);
+            this.teleFastSpeed = x.teleFastSpeed;
+            this.teleSlowSpeed = x.teleSlowSpeed;
+            this.autoDriveSpeed = x.autoDriveSpeed;
+            this.autoTurnSpeed = x.autoTurnSpeed;
+            this.autoHeadingThreshold = x.autoHeadingThreshold;
+            this.autoTurnCoefficient = x.autoTurnCoefficient;
+            this.autoDriveCoefficient = x.autoDriveCoefficient;
+            this.driveEncoderCountsPerRev = x.driveEncoderCountsPerRev;
+            this.driveGearRatio = x.driveGearRatio;
+            this.driveWheelDiameter = x.driveWheelDiameter;
+        }
+        catch (Exception e)
+        {
+            Log.w("CACTUS", "error reading settings file %s: ", e);
+        }
     }
 
     public void writeSettings() {
-        String filename = "CactusRobotSettings.json";
-        File file = AppUtil.getInstance().getSettingsFile(filename);
+        File file = AppUtil.getInstance().getSettingsFile(this.SETTINGS_FILE);
         ReadWriteFile.writeFile(file, this.serialize());
     }
 

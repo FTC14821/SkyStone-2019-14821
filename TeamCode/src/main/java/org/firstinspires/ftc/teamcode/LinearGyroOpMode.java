@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,8 +39,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-import java.lang.annotation.Annotation;
 
 /**
  * This is Team 14821 (Cactus Intelligence Agency) extension of LinearOpMode class that adds
@@ -110,34 +107,49 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
 
     public double TEST = 0;
 
-    public void setCOUNTS_PER_MOTOR_REV(double COUNTS_PER_MOTOR_REV) {
-        this.COUNTS_PER_MOTOR_REV = COUNTS_PER_MOTOR_REV;
-        this.setCOUNTS_PER_INCH();
-    }
-
-    public void setDRIVE_GEAR_REDUCTION(double DRIVE_GEAR_REDUCTION) {
-        this.DRIVE_GEAR_REDUCTION = DRIVE_GEAR_REDUCTION;
-        this.setCOUNTS_PER_INCH();
-    }
-
-    public void setWHEEL_DIAMETER_INCHES(double WHEEL_DIAMETER_INCHES) {
-        this.WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_INCHES;
-        this.setCOUNTS_PER_INCH();
-    }
-
-    private void setCOUNTS_PER_INCH() {
-        // recalculate COUNTS_PER_INCH but protect against zero value for wheel diameter
-        this.COUNTS_PER_INCH = (this.WHEEL_DIAMETER_INCHES != 0) ?
-                (this.COUNTS_PER_MOTOR_REV * this.DRIVE_GEAR_REDUCTION) / (this.WHEEL_DIAMETER_INCHES * 3.1415) : 0;
-    }
-
     /**
      * Constructor for LinearGyroOpMode sets initial COUNTS_PER_INCH
      */
     public LinearGyroOpMode() {
         this.TEST = Math.random()*100;
-        this.setCOUNTS_PER_INCH();
+        this.calcCountsPerInch();
     }
+
+    /**
+     * Constructor for LinearGyroOpmode with defaults for key values
+     * @param COUNTS_PER_MOTOR_REV  Number of encoder counts per drive wheel revolution
+     * @param DRIVE_GEAR_REDUCTION  Gear reduction (<1.0 if geared up)
+     * @param WHEEL_DIAMETER_INCHES Drive wheel diameter in inches
+     */
+    public LinearGyroOpMode(double COUNTS_PER_MOTOR_REV, double DRIVE_GEAR_REDUCTION, double WHEEL_DIAMETER_INCHES) {
+        this.COUNTS_PER_MOTOR_REV = COUNTS_PER_MOTOR_REV;
+        this.DRIVE_GEAR_REDUCTION = DRIVE_GEAR_REDUCTION;
+        this.WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_INCHES;
+        this.calcCountsPerInch();
+    }
+
+    public void setCOUNTS_PER_MOTOR_REV(double COUNTS_PER_MOTOR_REV) {
+        this.COUNTS_PER_MOTOR_REV = COUNTS_PER_MOTOR_REV;
+        this.calcCountsPerInch();
+    }
+
+    public void setDRIVE_GEAR_REDUCTION(double DRIVE_GEAR_REDUCTION) {
+        this.DRIVE_GEAR_REDUCTION = DRIVE_GEAR_REDUCTION;
+        this.calcCountsPerInch();
+    }
+
+    public void setWHEEL_DIAMETER_INCHES(double WHEEL_DIAMETER_INCHES) {
+        this.WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_INCHES;
+        this.calcCountsPerInch();
+    }
+
+    private double calcCountsPerInch() {
+        // recalculate COUNTS_PER_INCH but protect against zero value for wheel diameter
+        this.COUNTS_PER_INCH = (this.WHEEL_DIAMETER_INCHES != 0) ?
+                (this.COUNTS_PER_MOTOR_REV * this.DRIVE_GEAR_REDUCTION) / (this.WHEEL_DIAMETER_INCHES * 3.1415) : 0;
+        return this.COUNTS_PER_INCH;
+    }
+
 
     /**
      * Method to drive on a fixed compass bearing (angle), based on encoder counts.
