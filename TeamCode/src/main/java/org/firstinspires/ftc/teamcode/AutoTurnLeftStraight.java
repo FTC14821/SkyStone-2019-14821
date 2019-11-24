@@ -31,15 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * This file illustrates the concept of driving a path based on Gyro heading and encoder counts.
@@ -74,21 +66,43 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Cactus: Auto BLUE Blockside", group = "BLUE")
-public class AutoBlueBlockside extends LinearGyroOpMode {
+@Autonomous(name = "Cactus: Auto Gyro Straight", group = "Any")
+public class AutoTurnLeftStraight extends LinearGyroOpMode {
 
-//  !55
+//    /* Declare OpMode members. */
+//    CactusRobot robot = new CactusRobot();   // Use a Pushbot's hardware
+//
+//    //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
+//    private BNO055IMU imu;
+//    private BNO055IMU.Parameters imuParameters;
+//
+//    static final double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
+//    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
+//    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+//    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+//            (WHEEL_DIAMETER_INCHES * 3.1415);
+//
+//    // These constants define the desired driving/control characteristics
+//    // The can/should be tweaked to suite the specific robot drive train.
+//    static final double DRIVE_SPEED = .4;     // Nominal speed for better accuracy.
+//    static final double TURN_SPEED = .3;     // Nominal half speed for better accuracy.
+//
+//    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
+//    static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
+//    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
+
 
     @Override
     public void runOpMode() {
 
-        double heading=0;
+        double heading = 0;
 
         /*
          * Initialize the standard drive system variables.
          * The init() method of the hardware class does most of the work here
          */
         robot.init(hardwareMap);
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         // Create new IMU Parameters object.
         imuParameters = new BNO055IMU.Parameters();
@@ -98,8 +112,6 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
         imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         // Disable logging.
         imuParameters.loggingEnabled = false;
-        // Initialize IMU.
-        imu.initialize(imuParameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -109,13 +121,16 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
 
-        // gyro.calibrate();
+        // Initialize IMU.
+        // this will automatically calibrate the gyro
+        imu.initialize(imuParameters);
 
         // make sure the gyro is calibrated before continuing
-        //while (!isStopRequested() && gyro.isCalibrating())  {
-        // sleep(50);
-        //idle();
-        //}
+// TODO Leftover loop from the original gyro example, but untested for the IMU
+//        while (!isStopRequested() && !imu.isGyroCalibrated()) {
+//            sleep(50);
+//            idle();
+//        }
 
         imu.startAccelerationIntegration(null, null, 1000);
 
@@ -131,8 +146,6 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
             telemetry.update();
         }
 
-//       imu.resetZAxisIntegrator();
-
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
@@ -147,32 +160,20 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
 //        gyroDrive(DRIVE_SPEED, -48.0, 0.0);    // Drive REV 48 inches
 
         heading=0; //start at this heading
-        gyroDrive(DRIVE_SPEED, 36.0, heading);
-        //gyroHold(TURN_SPEED, heading, 0.25);
-        robot.leftGripper.setPower(.5);
-        robot.rightGripper.setPower(.5);
-        gyroDrive(DRIVE_SPEED, 10.0, heading);
-        gyroHold(TURN_SPEED, heading, 0.1); //wheels keep running
-        robot.leftGripper.setPower(0);
-        robot.rightGripper.setPower(0);
-        gyroDrive(DRIVE_SPEED, -20.0, heading);
+        gyroDrive(DRIVE_SPEED, 26, heading);
 
-        // turn right and drive to the other side
+        // turn left
         heading=90;    //right turn
         gyroTurn(TURN_SPEED, heading);
         gyroHold(TURN_SPEED, heading, 0.5);
-        gyroDrive(DRIVE_SPEED, 40.0, heading);
 
-        // spit the block out by running grippers for 0.75 seconds
-        robot.leftGripper.setPower(-1);
-        robot.rightGripper.setPower(-1);
-        gyroDrive(DRIVE_SPEED, -4.0, heading);
-        gyroHold(TURN_SPEED, heading, 0.75);
-        robot.leftGripper.setPower(0);
-        robot.rightGripper.setPower(0);
+        // Drive to the line
+        gyroDrive(DRIVE_SPEED, 20.0, heading);
 
-        gyroDrive(DRIVE_SPEED, -16.0, heading);
+        //
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
     }
+
 }
