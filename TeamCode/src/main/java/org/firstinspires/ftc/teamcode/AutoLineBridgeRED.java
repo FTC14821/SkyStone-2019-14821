@@ -31,15 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * This file illustrates the concept of driving a path based on Gyro heading and encoder counts.
@@ -74,34 +66,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Cactus: Auto Gyro Straight", group = "Any")
-public class AutoDriveStraight extends LinearGyroOpMode {
-
-//    /* Declare OpMode members. */
-//    CactusRobot robot = new CactusRobot();   // Use a Pushbot's hardware
-//
-//    //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
-//    private BNO055IMU imu;
-//    private BNO055IMU.Parameters imuParameters;
-//
-//    static final double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
-//    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
-//    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
-//    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-//            (WHEEL_DIAMETER_INCHES * 3.1415);
-//
-//    // These constants define the desired driving/control characteristics
-//    // The can/should be tweaked to suite the specific robot drive train.
-//    static final double DRIVE_SPEED = .4;     // Nominal speed for better accuracy.
-//    static final double TURN_SPEED = .3;     // Nominal half speed for better accuracy.
-//
-//    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
-//    static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
-//    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
-
+@Autonomous(name = "Auto Line Bridge RED", group = "RED")
+public class AutoLineBridgeRED extends LinearGyroOpMode {
 
     @Override
     public void runOpMode() {
+
+        double heading = 0;
 
         /*
          * Initialize the standard drive system variables.
@@ -165,7 +136,20 @@ public class AutoDriveStraight extends LinearGyroOpMode {
 //        gyroHold(TURN_SPEED, 0.0, 1.0);    // Hold  0 Deg heading for a 1 second
 //        gyroDrive(DRIVE_SPEED, -48.0, 0.0);    // Drive REV 48 inches
 
-        gyroDrive(DRIVE_SPEED, 12.0, 0.0);
+        heading=0; //start at this heading
+        gyroDrive(DRIVE_SPEED, 26, heading);
+
+        // turn left
+        heading=90;    //right turn
+        gyroTurn(TURN_SPEED, heading);
+        gyroHold(TURN_SPEED, heading, 0.5);
+
+        // Drive to the line
+        gyroDrive(DRIVE_SPEED, 20.0, heading);
+
+        //
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
 
     }
 

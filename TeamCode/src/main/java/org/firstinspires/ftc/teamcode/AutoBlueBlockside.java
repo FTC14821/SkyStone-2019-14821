@@ -74,10 +74,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Cactus: Auto BLUE Blockside", group = "BLUE")
+@Autonomous(name = "Auto BLUE Blockside", group = "BLUE")
 public class AutoBlueBlockside extends LinearGyroOpMode {
-
-//  !55
 
     @Override
     public void runOpMode() {
@@ -152,13 +150,13 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
         robot.leftGripper.setPower(.5);
         robot.rightGripper.setPower(.5);
         gyroDrive(DRIVE_SPEED, 10.0, heading);
-        gyroHold(TURN_SPEED, heading, 0.1); //wheels keep running
+        gyroHold(TURN_SPEED, heading, 0.2); //wheels keep running
         robot.leftGripper.setPower(0);
         robot.rightGripper.setPower(0);
         gyroDrive(DRIVE_SPEED, -20.0, heading);
 
         // turn right and drive to the other side
-        heading=90;    //right turn
+        heading=90;    //LEFT turn
         gyroTurn(TURN_SPEED, heading);
         gyroHold(TURN_SPEED, heading, 0.5);
         gyroDrive(DRIVE_SPEED, 40.0, heading);

@@ -79,7 +79,7 @@ public class CactusRobot {
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fangs.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fangs.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         leftGripper = hwMap.get(CRServo.class, "leftGripper");

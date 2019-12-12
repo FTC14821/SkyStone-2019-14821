@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -74,21 +75,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Auto RED Blockside", group = "RED")
-public class AutoRedBlockside extends LinearGyroOpMode {
+@Disabled
+@Autonomous(name = "TEST: Gyro Straight with stop", group = "Any")
+public class TESTAutoWithRobotSensorExit extends LinearGyroOpMode {
 
-//  !55
+    MotorSensor leftMotorDetect;
 
     @Override
     public void runOpMode() {
-
-        double heading=0;
 
         /*
          * Initialize the standard drive system variables.
          * The init() method of the hardware class does most of the work here
          */
         robot.init(hardwareMap);
+
+//        leftMotorDetect = new MotorSensor(robot.leftDrive);
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         // Create new IMU Parameters object.
         imuParameters = new BNO055IMU.Parameters();
@@ -98,8 +101,6 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         // Disable logging.
         imuParameters.loggingEnabled = false;
-        // Initialize IMU.
-        imu.initialize(imuParameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -109,13 +110,16 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
 
-        // gyro.calibrate();
+        // Initialize IMU.
+        // this will automatically calibrate the gyro
+        imu.initialize(imuParameters);
 
         // make sure the gyro is calibrated before continuing
-        //while (!isStopRequested() && gyro.isCalibrating())  {
-        // sleep(50);
-        //idle();
-        //}
+// TODO Leftover loop from the original gyro example, but untested for the IMU
+//        while (!isStopRequested() && !imu.isGyroCalibrated()) {
+//            sleep(50);
+//            idle();
+//        }
 
         imu.startAccelerationIntegration(null, null, 1000);
 
@@ -131,8 +135,6 @@ public class AutoRedBlockside extends LinearGyroOpMode {
             telemetry.update();
         }
 
-//       imu.resetZAxisIntegrator();
-
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
@@ -146,33 +148,9 @@ public class AutoRedBlockside extends LinearGyroOpMode {
 //        gyroHold(TURN_SPEED, 0.0, 1.0);    // Hold  0 Deg heading for a 1 second
 //        gyroDrive(DRIVE_SPEED, -48.0, 0.0);    // Drive REV 48 inches
 
-        heading=0; //start at this heading
-        gyroDrive(DRIVE_SPEED, 36.0, heading);
-        //gyroHold(TURN_SPEED, heading, 0.25);
-        robot.leftGripper.setPower(.5);
-        robot.rightGripper.setPower(.5);
-        gyroDrive(DRIVE_SPEED, 10.0, heading);
-        gyroHold(TURN_SPEED, heading, 0.1); //wheels keep running
-        robot.leftGripper.setPower(0);
-        robot.rightGripper.setPower(0);
-        gyroDrive(DRIVE_SPEED, -20.0, heading);
+        gyroDrive(DRIVE_SPEED, 12.0, 0.0);
 
-        // turn right and drive to the other side
-        heading=-90;    //RIGHT turn
-        gyroTurn(TURN_SPEED, heading);
-        gyroHold(TURN_SPEED, heading, 0.5);
-        gyroDrive(DRIVE_SPEED, 40.0, heading);
 
-        // spit the block out by running grippers for 0.75 seconds
-        robot.leftGripper.setPower(-1);
-        robot.rightGripper.setPower(-1);
-        gyroDrive(DRIVE_SPEED, -4.0, heading);
-        gyroHold(TURN_SPEED, heading, 0.75);
-        robot.leftGripper.setPower(0);
-        robot.rightGripper.setPower(0);
-
-        gyroDrive(DRIVE_SPEED, -16.0, heading);
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
     }
+
 }

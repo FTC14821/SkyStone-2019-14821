@@ -105,6 +105,9 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     public double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     public double P_DRIVE_COEFF = 0.1;     // Larger is more responsive, but also less stable
 
+    public int FANGS_UP_POSITION = 275;    // eg: Neverest 60
+    public int FANGS_DOWN_POSITION = 0;
+
     public double TEST = 0;
 
     /**

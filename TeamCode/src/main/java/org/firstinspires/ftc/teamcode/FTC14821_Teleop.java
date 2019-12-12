@@ -18,8 +18,8 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
 
-@TeleOp(name = "FTC 14821 Teleop", group = "")
-public class FTC14821_Teleop extends LinearOpMode {
+@TeleOp(name = " Teleop: FTC 14821", group = "any")
+public class FTC14821_Teleop extends LinearGyroOpMode {
 
     // create an instance of our robot hardware
     CactusRobot robot = new CactusRobot();
@@ -123,15 +123,20 @@ public class FTC14821_Teleop extends LinearOpMode {
                 }
 
                 if (gamepad2.x == true) {
-                    robot.fangs.setPower(0.1);
+                    robot.fangs.setTargetPosition(FANGS_UP_POSITION);
+                    robot.fangs.setPower(0.3); //UP
+                    robot.fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } else if (gamepad2.y == true) {
-                    robot.fangs.setPower(-0.1);
+                    robot.fangs.setTargetPosition(FANGS_DOWN_POSITION);
+                    robot.fangs.setPower(-0.2); //DOWN
+                    robot.fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } else {
-                    robot.fangs.setPower(0);
+//                    robot.fangs.setPower(0);
                 }
 
                 telemetry.addData("leftPosition", robot.leftDrive.getCurrentPosition());
                 telemetry.addData("rightPosition", robot.rightDrive.getCurrentPosition());
+                telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();
             }
         }
