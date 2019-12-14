@@ -41,43 +41,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-/**
- * This file illustrates the concept of driving a path based on Gyro heading and encoder counts.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is structured as a LinearOpMode
- * <p>
- * The code REQUIRES that you DO have encoders on the wheels,
- * otherwise you would use: PushbotAutoDriveByTime;
- * <p>
- * This code ALSO requires that you have a Modern Robotics I2C gyro with the name "gyro"
- * otherwise you would use: PushbotAutoDriveByEncoder;
- * <p>
- * This code requires that the drive Motors have been configured such that a positive
- * power command moves them forward, and causes the encoders to count UP.
- * <p>
- * This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
- * <p>
- * In order to calibrate the Gyro correctly, the robot must remain stationary during calibration.
- * This is performed when the INIT button is pressed on the Driver Station.
- * This code assumes that the robot is stationary when the INIT button is pressed.
- * If this is not the case, then the INIT should be performed again.
- * <p>
- * Note: in this example, all angles are referenced to the initial coordinate frame set during the
- * the Gyro Calibration process, or whenever the program issues a resetZAxisIntegrator() call on the Gyro.
- * <p>
- * The angle of movement/rotation is assumed to be a standardized rotation around the robot Z axis,
- * which means that a Positive rotation is Counter Clock Wise, looking down on the field.
- * This is consistent with the FTC field coordinate conventions set out in the document:
- * ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
- * <p>
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
 @Autonomous(name = "Auto RED Blockside", group = "RED")
 public class AutoRedBlockside extends LinearGyroOpMode {
-
-//  !55
 
     @Override
     public void runOpMode() {
@@ -131,20 +96,6 @@ public class AutoRedBlockside extends LinearGyroOpMode {
             telemetry.update();
         }
 
-//       imu.resetZAxisIntegrator();
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
-//        gyroDrive(DRIVE_SPEED, 48.0, 0.0);    // Drive FWD 48 inches
-//        gyroTurn(TURN_SPEED, -45.0);         // Turn  CCW to -45 Degrees
-//        gyroHold(TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
-//        gyroDrive(DRIVE_SPEED, 12.0, -45.0);  // Drive FWD 12 inches at 45 degrees
-//        gyroTurn(TURN_SPEED, 45.0);         // Turn  CW  to  45 Degrees
-//        gyroHold(TURN_SPEED, 45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-//        gyroTurn(TURN_SPEED, 0.0);         // Turn  CW  to   0 Degrees
-//        gyroHold(TURN_SPEED, 0.0, 1.0);    // Hold  0 Deg heading for a 1 second
-//        gyroDrive(DRIVE_SPEED, -48.0, 0.0);    // Drive REV 48 inches
 
         heading=0; //start at this heading
         gyroDrive(DRIVE_SPEED, 36.0, heading);
