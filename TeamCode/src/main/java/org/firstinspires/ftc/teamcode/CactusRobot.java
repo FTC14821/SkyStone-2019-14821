@@ -67,6 +67,7 @@ public class CactusRobot {
 
         armRotate = hwMap.get(DcMotor.class, "armRotate");
         armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armRotate.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         leftDrive.setPower(0);
