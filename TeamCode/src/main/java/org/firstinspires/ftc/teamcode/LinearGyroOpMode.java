@@ -114,12 +114,13 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      * Constructor for LinearGyroOpMode sets initial COUNTS_PER_INCH
      */
     public LinearGyroOpMode() {
-        this.TEST = Math.random()*100;
+        this.TEST = Math.random() * 100;
         this.calcCountsPerInch();
     }
 
     /**
      * Constructor for LinearGyroOpmode with defaults for key values
+     *
      * @param COUNTS_PER_MOTOR_REV  Number of encoder counts per drive wheel revolution
      * @param DRIVE_GEAR_REDUCTION  Gear reduction (<1.0 if geared up)
      * @param WHEEL_DIAMETER_INCHES Drive wheel diameter in inches
@@ -154,6 +155,12 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     }
 
 
+    public void gyroDrive(double speed,
+                          double distance,
+                          double angle) {
+        gyroDrive(speed, distance, angle, 30);
+    }
+
     /**
      * Method to drive on a fixed compass bearing (angle), based on encoder counts.
      * Move will stop if either of these conditions occur:
@@ -165,10 +172,12 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
      *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                 If a relative angle is required, add/subtract from current heading.
+     * @param timeout  Number of seconds (can be fractional) before timing out, whether we get there or not
      */
     public void gyroDrive(double speed,
                           double distance,
-                          double angle) {
+                          double angle,
+                          double timeout) {
 
         int newLeftTarget;
         int newRightTarget;
@@ -200,9 +209,13 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             robot.leftDrive.setPower(speed);
             robot.rightDrive.setPower(speed);
 
+            ElapsedTime timeoutTimer = new ElapsedTime();
+            timeoutTimer.reset();
+
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy()) &&
+                    (timeoutTimer.time() < timeout)) {
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);

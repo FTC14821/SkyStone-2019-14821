@@ -103,7 +103,7 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
         gyroHold(TURN_SPEED, heading, 0.25);
         robot.leftGripper.setPower(.5);
         robot.rightGripper.setPower(.5);
-        gyroDrive(DRIVE_SPEED, 10.0, heading);
+        gyroDrive(DRIVE_SPEED, 10.0, heading, 2); // TIMEOUT
         gyroHold(TURN_SPEED, heading, 0.2); //wheels keep running
         robot.leftGripper.setPower(0);
         robot.rightGripper.setPower(0);
