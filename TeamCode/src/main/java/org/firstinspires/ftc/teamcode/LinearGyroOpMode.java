@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
@@ -158,26 +159,34 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     public void gyroDrive(double speed,
                           double distance,
                           double angle) {
-        gyroDrive(speed, distance, angle, 30);
+        gyroDrive(speed, distance, angle, 15, 0);
     }
 
-    /**
-     * Method to drive on a fixed compass bearing (angle), based on encoder counts.
-     * Move will stop if either of these conditions occur:
-     * 1) Move gets to the desired position
-     * 2) Driver stops the opmode running.
-     *
-     * @param speed    Target speed for forward motion.  Should allow for _/- variance for adjusting heading
-     * @param distance Distance (in inches) to move from current position.  Negative distance means move backwards.
-     * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
-     *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                 If a relative angle is required, add/subtract from current heading.
-     * @param timeout  Number of seconds (can be fractional) before timing out, whether we get there or not
-     */
     public void gyroDrive(double speed,
                           double distance,
                           double angle,
                           double timeout) {
+        gyroDrive(speed, distance, angle, timeout, 0);
+    }
+
+        /**
+         * Method to drive on a fixed compass bearing (angle), based on encoder counts.
+         * Move will stop if either of these conditions occur:
+         * 1) Move gets to the desired position
+         * 2) Driver stops the opmode running.
+         *
+         * @param speed    Target speed for forward motion.  Should allow for _/- variance for adjusting heading
+         * @param distance Distance (in inches) to move from current position.  Negative distance means move backwards.
+         * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
+         *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+         *                 If a relative angle is required, add/subtract from current heading.
+         * @param timeout  Number of seconds (can be fractional) before timing out, whether we get there or not
+         */
+    public void gyroDrive(double speed,
+                          double distance,
+                          double angle,
+                          double timeout,
+                          double frontDistance) {
 
         int newLeftTarget;
         int newRightTarget;
@@ -215,6 +224,8 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                     (robot.leftDrive.isBusy() && robot.rightDrive.isBusy()) &&
+                    (Double.isNaN(robot.forwardDistance.getDistance(DistanceUnit.CM)) ||
+                            robot.forwardDistance.getDistance(DistanceUnit.CM) > frontDistance) &&
                     (timeoutTimer.time() < timeout)) {
 
                 // adjust relative speed based on heading error.

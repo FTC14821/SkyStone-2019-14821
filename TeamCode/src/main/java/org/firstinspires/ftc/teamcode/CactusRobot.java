@@ -31,6 +31,8 @@ public class CactusRobot {
 
     public DcMotor leftDrive = null;
     public DcMotor rightDrive = null;
+    public DcMotor leftBackDrive = null;
+    public DcMotor rightBackDrive = null;
     public DcMotor armRotate = null;
     public DcMotor fangs = null;
     public CRServo leftGripper = null;
@@ -78,7 +80,9 @@ public class CactusRobot {
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fangs.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

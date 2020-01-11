@@ -108,7 +108,9 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                 }
 
                 robot.leftDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
+                robot.leftBackDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
                 robot.rightDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
+                robot.rightBackDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
                 robot.armRotate.setPower(gamepad2.left_stick_y * 0.4);
 
                 if (gamepad2.left_bumper == true) {
