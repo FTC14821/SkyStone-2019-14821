@@ -58,11 +58,17 @@ public class CactusRobot {
 
         // Define and Initialize Motors
         leftDrive = hwMap.get(DcMotor.class, "leftDrive");
+        leftBackDrive = hwMap.get(DcMotor.class,"leftBackDrive");
         rightDrive = hwMap.get(DcMotor.class, "rightDrive");
+        rightBackDrive = hwMap.get(DcMotor.class, "rightBackDrive");
         leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fangs = hwMap.get(DcMotor.class, "fangMotor");
         fangs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -73,7 +79,9 @@ public class CactusRobot {
 
         // Set all motors to zero power
         leftDrive.setPower(0);
+        leftBackDrive.setPower(0);
         rightDrive.setPower(0);
+        rightBackDrive.setPower(0);
         armRotate.setPower(0);
         fangs.setPower(0);
 
@@ -81,8 +89,10 @@ public class CactusRobot {
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fangs.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
