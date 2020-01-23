@@ -93,11 +93,11 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         gyroDrive(DRIVE_SPEED, 36.0, heading);
         //gyroHold(TURN_SPEED, heading, 0.25);
         robot.gripper.setPosition(.5);
-        robot.rightGripper.setPower(.5);
+        //robot.rightGripper.setPower(.5);
         gyroDrive(DRIVE_SPEED, 10.0, heading, 2, 6); // TIMEOUT
         gyroHold(TURN_SPEED, heading, 0.1); //wheels keep running
         robot.gripper.setPosition(0);
-        robot.rightGripper.setPower(0);
+//        robot.rightGripper.setPower(0);
         gyroDrive(DRIVE_SPEED, -20.0, heading);
 
         // turn right and drive to the other side
@@ -108,11 +108,11 @@ public class AutoRedBlockside extends LinearGyroOpMode {
 
         // spit the block out by running grippers for 0.75 seconds
         robot.gripper.setPosition(-1);
-        robot.rightGripper.setPower(-1);
+//        robot.rightGripper.setPower(-1);
         gyroDrive(DRIVE_SPEED, -4.0, heading);
         gyroHold(TURN_SPEED, heading, 0.75);
         robot.gripper.setPosition(0);
-        robot.rightGripper.setPower(0);
+//        robot.rightGripper.setPower(0);
 
         gyroDrive(DRIVE_SPEED, -16.0, heading);
         telemetry.addData("Path", "Complete");

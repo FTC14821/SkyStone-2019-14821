@@ -106,13 +106,13 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 
                 if (gamepad2.left_bumper == true) {
                     robot.gripper.setPosition(1);
-                    robot.rightGripper.setPower(1);
+//                    robot.rightGripper.setPower(1);
                 } else if (gamepad2.right_bumper == true) {
                     robot.gripper.setPosition(-1);
-                    robot.rightGripper.setPower(-1);
+//                    robot.rightGripper.setPower(-1);
                 } else {
                     robot.gripper.setPosition(0);
-                    robot.rightGripper.setPower(0);
+//                    robot.rightGripper.setPower(0);
                 }
 
                 if (gamepad2.y == true) {

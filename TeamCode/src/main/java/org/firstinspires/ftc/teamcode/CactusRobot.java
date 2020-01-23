@@ -94,10 +94,10 @@ public class CactusRobot {
 
         // Define and initialize ALL installed servos.
         gripper = hwMap.get(Servo.class, "gripper");
-        rightGripper = hwMap.get(CRServo.class, "rightGripper");
-        rightGripper.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightGripper = hwMap.get(CRServo.class, "rightGripper");
+//        rightGripper.setDirection(DcMotorSimple.Direction.REVERSE);
         //gripper.setPower(0);
-        rightGripper.setPower(0);
+//        rightGripper.setPower(0);
 
     }
 }
