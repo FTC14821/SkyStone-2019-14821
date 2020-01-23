@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.drawable.GradientDrawable;
-
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,10 +8,6 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorREVColorDistance;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 
 
 /**
@@ -25,17 +19,17 @@ import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
  * CactusRobot robot = new CactusRobot();   // Use a CactusRobot's hardware
  * robot.init(hardwareMap);
  * Then reference the hardware with things like
- * robot.leftDrive.setSpeed()
+ * robot.leftBackDrive.setSpeed()
  */
 public class CactusRobot {
 
-    public DcMotor leftDrive = null;
-    public DcMotor rightDrive = null;
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
+    public DcMotor leftFrontDrive = null;
+    public DcMotor rightFrontDrive = null;
     public DcMotor armRotate = null;
     public DcMotor fangs = null;
-    public CRServo leftGripper = null;
+    public Servo gripper = null;
     public CRServo rightGripper = null;
     public ColorSensor forwardColor = null;
     public DistanceSensor forwardDistance = null;
@@ -57,18 +51,20 @@ public class CactusRobot {
         forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
 
         // Define and Initialize Motors
-        leftDrive = hwMap.get(DcMotor.class, "leftDrive");
-        leftBackDrive = hwMap.get(DcMotor.class,"leftBackDrive");
-        rightDrive = hwMap.get(DcMotor.class, "rightDrive");
+        leftBackDrive = hwMap.get(DcMotor.class, "leftBackDrive");
+        leftFrontDrive = hwMap.get(DcMotor.class,"leftFrontDrive");
         rightBackDrive = hwMap.get(DcMotor.class, "rightBackDrive");
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        rightFrontDrive = hwMap.get(DcMotor.class, "rightFrontDrive");
+
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fangs = hwMap.get(DcMotor.class, "fangMotor");
         fangs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -78,29 +74,29 @@ public class CactusRobot {
         armRotate.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
-        leftDrive.setPower(0);
         leftBackDrive.setPower(0);
-        rightDrive.setPower(0);
+        leftFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
         armRotate.setPower(0);
         fangs.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fangs.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        leftGripper = hwMap.get(CRServo.class, "leftGripper");
+        gripper = hwMap.get(Servo.class, "gripper");
         rightGripper = hwMap.get(CRServo.class, "rightGripper");
         rightGripper.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftGripper.setPower(0);
+        //gripper.setPower(0);
         rightGripper.setPower(0);
 
     }

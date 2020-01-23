@@ -3,20 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
 
 @TeleOp(name = " Teleop: FTC 14821", group = "any")
 public class FTC14821_Teleop extends LinearGyroOpMode {
@@ -107,20 +98,20 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                     driveSpeedScale = settings.teleFastSpeed;
                 }
 
-                robot.leftDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
                 robot.leftBackDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
-                robot.rightDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
+                robot.leftFrontDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
                 robot.rightBackDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
+                robot.rightFrontDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
                 robot.armRotate.setPower(gamepad2.left_stick_y * 0.4);
 
                 if (gamepad2.left_bumper == true) {
-                    robot.leftGripper.setPower(1);
+                    robot.gripper.setPosition(1);
                     robot.rightGripper.setPower(1);
                 } else if (gamepad2.right_bumper == true) {
-                    robot.leftGripper.setPower(-1);
+                    robot.gripper.setPosition(-1);
                     robot.rightGripper.setPower(-1);
                 } else {
-                    robot.leftGripper.setPower(0);
+                    robot.gripper.setPosition(0);
                     robot.rightGripper.setPower(0);
                 }
 
@@ -136,8 +127,8 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 //                    robot.fangs.setPower(0);
                 }
 
-                telemetry.addData("leftPosition", robot.leftDrive.getCurrentPosition());
-                telemetry.addData("rightPosition", robot.rightDrive.getCurrentPosition());
+                telemetry.addData("leftPosition", robot.leftBackDrive.getCurrentPosition());
+                telemetry.addData("rightPosition", robot.rightBackDrive.getCurrentPosition());
                 telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();
             }

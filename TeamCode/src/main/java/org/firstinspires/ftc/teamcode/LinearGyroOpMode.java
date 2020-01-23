@@ -91,7 +91,8 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
     public BNO055IMU imu;
     public BNO055IMU.Parameters imuParameters;
-    public double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
+    //public double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
+    public double COUNTS_PER_MOTOR_REV = 753.2;
     public double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     public double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
 
@@ -203,33 +204,33 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
 
             // Determine new target position, and pass to motor controller
             moveCounts = (int) (distance * COUNTS_PER_INCH);
-            newLeftTarget = robot.leftDrive.getCurrentPosition() + moveCounts;
-            newRightTarget = robot.rightDrive.getCurrentPosition() + moveCounts;
+            newLeftTarget = robot.leftBackDrive.getCurrentPosition() + moveCounts;
+            newRightTarget = robot.rightBackDrive.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
-            robot.leftDrive.setTargetPosition(newLeftTarget);
             robot.leftBackDrive.setTargetPosition(newLeftTarget);
-            robot.rightDrive.setTargetPosition(newRightTarget);
+            robot.leftFrontDrive.setTargetPosition(newLeftTarget);
             robot.rightBackDrive.setTargetPosition(newRightTarget);
+            robot.rightFrontDrive.setTargetPosition(newRightTarget);
 
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            robot.leftDrive.setPower(speed);
             robot.leftBackDrive.setPower(speed);
-            robot.rightDrive.setPower(speed);
+            robot.leftFrontDrive.setPower(speed);
             robot.rightBackDrive.setPower(speed);
+            robot.rightFrontDrive.setPower(speed);
 
             ElapsedTime timeoutTimer = new ElapsedTime();
             timeoutTimer.reset();
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy()) && robot.leftBackDrive.isBusy() && robot.rightBackDrive.isBusy() &&
+                    (robot.leftBackDrive.isBusy() && robot.rightBackDrive.isBusy()) && robot.leftFrontDrive.isBusy() && robot.rightFrontDrive.isBusy() &&
                     (Double.isNaN(robot.forwardDistance.getDistance(DistanceUnit.CM)) ||
                             robot.forwardDistance.getDistance(DistanceUnit.CM) > frontDistance) &&
                     (timeoutTimer.time() < timeout)) {
@@ -252,31 +253,31 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
                     rightSpeed /= max;
                 }
 
-                robot.leftDrive.setPower(leftSpeed);
                 robot.leftBackDrive.setPower(leftSpeed);
-                robot.rightDrive.setPower(rightSpeed);
+                robot.leftFrontDrive.setPower(leftSpeed);
                 robot.rightBackDrive.setPower(rightSpeed);
+                robot.rightFrontDrive.setPower(rightSpeed);
 
                 // Display drive status for the driver.
                 telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
                 telemetry.addData("Target", "%7d:%7d", newLeftTarget, newRightTarget);
-                telemetry.addData("Actual", "%7d:%7d", robot.leftDrive.getCurrentPosition(),
-                        robot.rightDrive.getCurrentPosition());
+                telemetry.addData("Actual", "%7d:%7d", robot.leftBackDrive.getCurrentPosition(),
+                        robot.rightBackDrive.getCurrentPosition());
                 telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
                 telemetry.update();
             }
 
             // Stop all motion;
-            robot.leftDrive.setPower(0);
             robot.leftBackDrive.setPower(0);
-            robot.rightDrive.setPower(0);
+            robot.leftFrontDrive.setPower(0);
             robot.rightBackDrive.setPower(0);
+            robot.rightFrontDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -323,10 +324,10 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         }
 
         // Stop all motion;
-        robot.leftDrive.setPower(0);
         robot.leftBackDrive.setPower(0);
-        robot.rightDrive.setPower(0);
+        robot.leftFrontDrive.setPower(0);
         robot.rightBackDrive.setPower(0);
+        robot.rightFrontDrive.setPower(0);
     }
 
     /**
@@ -361,10 +362,10 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         }
 
         // Send desired speeds to motors.
-        robot.leftDrive.setPower(leftSpeed);
-        robot.rightDrive.setPower(rightSpeed);
         robot.leftBackDrive.setPower(leftSpeed);
         robot.rightBackDrive.setPower(rightSpeed);
+        robot.leftFrontDrive.setPower(leftSpeed);
+        robot.rightFrontDrive.setPower(rightSpeed);
 
         // Display it for the driver.
         telemetry.addData("Target", "%5.2f", angle);

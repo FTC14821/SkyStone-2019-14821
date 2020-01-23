@@ -31,15 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous(name = "Auto RED Blockside", group = "RED")
 public class AutoRedBlockside extends LinearGyroOpMode {
@@ -67,8 +59,8 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         imu.initialize(imuParameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
-        robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData(">", "Calibrating Gyro");    //
@@ -87,8 +79,8 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         telemetry.addData(">", "Robot Ready.");    //
         telemetry.update();
 
-        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
@@ -100,11 +92,11 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         heading=0; //start at this heading
         gyroDrive(DRIVE_SPEED, 36.0, heading);
         //gyroHold(TURN_SPEED, heading, 0.25);
-        robot.leftGripper.setPower(.5);
+        robot.gripper.setPosition(.5);
         robot.rightGripper.setPower(.5);
         gyroDrive(DRIVE_SPEED, 10.0, heading, 2, 6); // TIMEOUT
         gyroHold(TURN_SPEED, heading, 0.1); //wheels keep running
-        robot.leftGripper.setPower(0);
+        robot.gripper.setPosition(0);
         robot.rightGripper.setPower(0);
         gyroDrive(DRIVE_SPEED, -20.0, heading);
 
@@ -115,11 +107,11 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         gyroDrive(DRIVE_SPEED, 40.0, heading);
 
         // spit the block out by running grippers for 0.75 seconds
-        robot.leftGripper.setPower(-1);
+        robot.gripper.setPosition(-1);
         robot.rightGripper.setPower(-1);
         gyroDrive(DRIVE_SPEED, -4.0, heading);
         gyroHold(TURN_SPEED, heading, 0.75);
-        robot.leftGripper.setPower(0);
+        robot.gripper.setPosition(0);
         robot.rightGripper.setPower(0);
 
         gyroDrive(DRIVE_SPEED, -16.0, heading);

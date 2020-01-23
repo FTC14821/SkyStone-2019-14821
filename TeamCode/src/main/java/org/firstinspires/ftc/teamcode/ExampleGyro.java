@@ -226,9 +226,9 @@ public class ExampleGyro extends LinearOpMode {
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
             robot.leftDrive.setPower(speed);
-            //robot.leftBackDrive.setPower(speed);
+            //robot.leftFrontDrive.setPower(speed);
             robot.rightDrive.setPower(speed);
-            //robot.rightBackDrive.setPower(speed);
+            //robot.rightFrontDrive.setPower(speed);
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
