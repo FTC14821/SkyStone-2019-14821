@@ -39,7 +39,7 @@ public class AutoRedBlockside extends LinearGyroOpMode {
     @Override
     public void runOpMode() {
 
-        double heading=0;
+        double heading = 0;
 
         /*
          * Initialize the standard drive system variables.
@@ -89,30 +89,26 @@ public class AutoRedBlockside extends LinearGyroOpMode {
         }
 
 
-        heading=0; //start at this heading
+        heading = 0; //start at this heading
+        robot.openGripper();
         gyroDrive(DRIVE_SPEED, 36.0, heading);
-        //gyroHold(TURN_SPEED, heading, 0.25);
-        robot.gripper.setPosition(.5);
-        //robot.rightGripper.setPower(.5);
-        gyroDrive(DRIVE_SPEED, 10.0, heading, 2, 6); // TIMEOUT
-        gyroHold(TURN_SPEED, heading, 0.1); //wheels keep running
-        robot.gripper.setPosition(0);
-//        robot.rightGripper.setPower(0);
+        robot.closeGripper();
+        gyroHold(DRIVE_SPEED, heading, .5);
+        robot.moveArmToPosition(1);
+        gyroHold(DRIVE_SPEED, heading, 2);
         gyroDrive(DRIVE_SPEED, -20.0, heading);
+        gyroHold(DRIVE_SPEED, heading, .5);
 
         // turn right and drive to the other side
-        heading=-90;    //RIGHT turn
+        heading = -90;    //RIGHT turn
         gyroTurn(TURN_SPEED, heading);
         gyroHold(TURN_SPEED, heading, 0.5);
         gyroDrive(DRIVE_SPEED, 40.0, heading);
 
         // spit the block out by running grippers for 0.75 seconds
-        robot.gripper.setPosition(-1);
-//        robot.rightGripper.setPower(-1);
-        gyroDrive(DRIVE_SPEED, -4.0, heading);
-        gyroHold(TURN_SPEED, heading, 0.75);
-        robot.gripper.setPosition(0);
-//        robot.rightGripper.setPower(0);
+        robot.moveArmToPosition(0);
+        robot.openGripper();
+        gyroHold(DRIVE_SPEED, heading, .5);
 
         gyroDrive(DRIVE_SPEED, -16.0, heading);
         telemetry.addData("Path", "Complete");

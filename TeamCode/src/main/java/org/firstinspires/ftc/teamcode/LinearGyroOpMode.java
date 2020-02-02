@@ -91,8 +91,9 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
     public BNO055IMU imu;
     public BNO055IMU.Parameters imuParameters;
-    //public double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
-    public double COUNTS_PER_MOTOR_REV = 753.2;
+    public double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
+//    public double COUNTS_PER_MOTOR_REV = 753.2;
+
     public double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     public double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
 

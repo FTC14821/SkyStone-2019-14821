@@ -13,16 +13,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class FTC14821_Teleop extends LinearGyroOpMode {
 
     // create an instance of our robot hardware
-    CactusRobot robot = new CactusRobot();
+    CactusRobot robot = new CactusRobot(telemetry);
     RobotSettings settings = new RobotSettings();
 
     private static final double fastSpeed = 0.6;
     private static final double slowSpeed = 0.4;
 
-    double gripClose;
-    double gripOpen;
     double fangRelease;
     double fangGrab;
+    boolean isGripOpen;
+    boolean bumperReleased;
+    boolean armStickReleased = true;
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -35,8 +36,8 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
      * Describe this function...
      */
     private void initialize() {
-        gripClose = 0;
-        gripOpen = 1;
+        isGripOpen = true;
+        bumperReleased = true;
         fangRelease = 0.65;
         fangGrab = 0;
 
@@ -53,6 +54,7 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
     }
 
     /**
@@ -63,6 +65,7 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 
         double driveSpeedScale;
         boolean savingSettings = false;
+        int absoluteArmPosition = 0;
 
         robot.init(hardwareMap);
         /*
@@ -102,17 +105,44 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                 robot.leftFrontDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
                 robot.rightBackDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
                 robot.rightFrontDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
-                robot.armRotate.setPower(gamepad2.left_stick_y * 0.4);
 
-                if (gamepad2.left_bumper == true) {
-                    robot.gripper.setPosition(1);
-//                    robot.rightGripper.setPower(1);
-                } else if (gamepad2.right_bumper == true) {
-                    robot.gripper.setPosition(-1);
-//                    robot.rightGripper.setPower(-1);
+
+                if (gamepad2.left_stick_y < -robot.acceptableArmThumbPos) {
+                    if (armStickReleased) {
+                        robot.moveArmToPosition(robot.getArmIndex() + 1);
+                        armStickReleased = false;
+                    }
+                } else if (gamepad2.left_stick_y > robot.acceptableArmThumbPos) {
+                    if (armStickReleased) {
+                        robot.moveArmToPosition(robot.getArmIndex() - 1);
+                        armStickReleased = false;
+                    }
                 } else {
-                    robot.gripper.setPosition(0);
-//                    robot.rightGripper.setPower(0);
+                    armStickReleased = true;
+                }
+
+                if (gamepad2.b) {
+                    absoluteArmPosition++;
+                    robot.armRotate.setTargetPosition(absoluteArmPosition);
+                    robot.armRotate.setPower(robot.armSpeed);
+                }
+                if (gamepad2.a) {
+                    absoluteArmPosition--;
+                    if (absoluteArmPosition < 0) absoluteArmPosition = 0;
+                    robot.armRotate.setTargetPosition(absoluteArmPosition);
+                    robot.armRotate.setPower(robot.armSpeed);
+                }
+
+                if (gamepad2.left_bumper && bumperReleased) {
+                    if (isGripOpen) {
+                        robot.closeGripper();
+                    } else {
+                        robot.openGripper();
+                    }
+                    isGripOpen = !isGripOpen;
+                    bumperReleased = false;
+                } else if (!gamepad2.left_bumper && !bumperReleased) {
+                    bumperReleased = true;
                 }
 
                 if (gamepad2.y == true) {
@@ -127,15 +157,16 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 //                    robot.fangs.setPower(0);
                 }
 
+                telemetry.addData("armPosition", robot.armRotate.getCurrentPosition());
+                telemetry.addData("armTargetPosition", robot.armPositions[robot.armIndex]);
+                telemetry.addData("armIndex", robot.getArmIndex());
                 telemetry.addData("leftPosition", robot.leftBackDrive.getCurrentPosition());
                 telemetry.addData("rightPosition", robot.rightBackDrive.getCurrentPosition());
+                telemetry.addData("gripperPosition", robot.gripper.getPosition());
                 telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();
             }
         }
     }
 
-    public double getHeading() {
-        return 123.456;
-    }
 }

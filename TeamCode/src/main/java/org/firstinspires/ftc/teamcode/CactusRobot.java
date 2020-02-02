@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 
 /**
  * org.firstinspires.ftc.teamcode.CactusRobot
@@ -34,12 +36,26 @@ public class CactusRobot {
     public ColorSensor forwardColor = null;
     public DistanceSensor forwardDistance = null;
 
+    //    public int[] armPositions = {0, 870, 1460, 2160};
+    public int[] armPositions = {0, 650, 1290, 1930};
+    public double acceptableArmThumbPos = .20;
+    public int armIndex = 0;
+    public double armSpeed = .5;
+
+    public double gripClose = .45;
+    public double gripOpen = 0;
+
     HardwareMap hwMap = null;
+    private Telemetry telemetry;
 
     private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
     public CactusRobot() {
+    }
+
+    public CactusRobot(Telemetry telemetry) {
+        this.telemetry = telemetry;
     }
 
     public void init(HardwareMap ahwMap) {
@@ -52,7 +68,7 @@ public class CactusRobot {
 
         // Define and Initialize Motors
         leftBackDrive = hwMap.get(DcMotor.class, "leftBackDrive");
-        leftFrontDrive = hwMap.get(DcMotor.class,"leftFrontDrive");
+        leftFrontDrive = hwMap.get(DcMotor.class, "leftFrontDrive");
         rightBackDrive = hwMap.get(DcMotor.class, "rightBackDrive");
         rightFrontDrive = hwMap.get(DcMotor.class, "rightFrontDrive");
 
@@ -72,6 +88,9 @@ public class CactusRobot {
         armRotate = hwMap.get(DcMotor.class, "armRotate");
         armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armRotate.setDirection(DcMotor.Direction.REVERSE);
+        armRotate.setPower(0);
+        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        moveArmToPosition(armIndex);
 
         // Set all motors to zero power
         leftBackDrive.setPower(0);
@@ -89,15 +108,79 @@ public class CactusRobot {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fangs.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         gripper = hwMap.get(Servo.class, "gripper");
-//        rightGripper = hwMap.get(CRServo.class, "rightGripper");
-//        rightGripper.setDirection(DcMotorSimple.Direction.REVERSE);
-        //gripper.setPower(0);
-//        rightGripper.setPower(0);
+//        this.closeGripper();
+        openGripper();
+//        this.waitFor(1);
+        initializeArmPosition();
+        closeGripper();
+        this.waitFor(1);
+    }
 
+    public int getArmIndex() {
+        return armIndex;
+    }
+
+    public void moveArmToPosition(int index) {
+        armIndex = index;
+        if (armIndex < 0) armIndex = 0;
+        if (armIndex > armPositions.length - 1) armIndex = armPositions.length - 1;
+        armRotate.setPower(0);
+        armRotate.setTargetPosition(armPositions[armIndex]);
+        armRotate.setPower(armSpeed);
+    }
+
+    public void releaseBlock() {
+        this.openGripper();
+    }
+
+    public void openGripper() {
+        gripper.setPosition(gripOpen);
+    }
+
+    public void closeGripper() {
+        gripper.setPosition(gripClose);
+    }
+
+    public void waitFor(double seconds) {
+        ElapsedTime timeoutTimer = new ElapsedTime();
+        timeoutTimer.reset();
+
+        while (timeoutTimer.time() < seconds) {
+            telemetry.addData("Timer", timeoutTimer.time());
+            telemetry.update();
+        }
+    }
+
+    public void initializeArmPosition() {
+        double prevPosition;
+        boolean stillMoving = true;
+        double nextSampleTime = 0.1;
+
+        ElapsedTime timeoutTimer = new ElapsedTime();
+        timeoutTimer.reset();
+
+        armRotate.setPower(0);
+        armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armRotate.setPower(-0.1);
+        prevPosition = armRotate.getCurrentPosition();
+        while (stillMoving && timeoutTimer.time() < 7) {
+            telemetry.addData("armPosition", armRotate.getCurrentPosition());
+            telemetry.addData("Timer", timeoutTimer.time());
+            telemetry.update();
+            if (timeoutTimer.time() >= nextSampleTime) {
+                stillMoving = (Math.abs(armRotate.getCurrentPosition() - prevPosition) > 0);
+                prevPosition = armRotate.getCurrentPosition();
+                nextSampleTime = timeoutTimer.time() + 0.1;
+            }
+        }
+        armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armRotate.setTargetPosition(0);
+        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
