@@ -86,13 +86,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public abstract class LinearGyroOpMode extends LinearOpMode {
 
     /* Declare OpMode members. */
-    public CactusRobot robot = new CactusRobot();   // Use a Pushbot's hardware
+    public CactusRobot robot = new CactusRobot(telemetry);   // Use a Pushbot's hardware
+
 
     //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
     public BNO055IMU imu;
     public BNO055IMU.Parameters imuParameters;
-    public double COUNTS_PER_MOTOR_REV = 536;    // eg: TETRIX Motor Encoder
-//    public double COUNTS_PER_MOTOR_REV = 753.2;
+    /* GoBilda Motor Encoder counts https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motors/
+        223RPM : 753.2
+        312RPM : 537.6
+     */
+//    public double COUNTS_PER_MOTOR_REV = 537.6;    // eg: TETRIX Motor Encoder
+    public double COUNTS_PER_MOTOR_REV = 753.2;
 
     public double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     public double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
@@ -101,17 +106,19 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    public double DRIVE_SPEED = 0.3;     // Nominal speed for better accuracy.
-    public double TURN_SPEED = 0.2;     // Nominal half speed for better accuracy.
+    public double DRIVE_SPEED = 0.4;     // Nominal speed for better accuracy.
+    public double TURN_SPEED = 0.8;     // Nominal half speed for better accuracy.
 
-    public double HEADING_THRESHOLD = 4;      // As tight as we can make it with an integer gyro
-    public double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
-    public double P_DRIVE_COEFF = 0.1;     // Larger is more responsive, but also less stable
+    public double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
+    public double P_TURN_COEFF = 0.02;     // Larger is more responsive, but also less stable
+    public double P_DRIVE_COEFF = 0.02;     // Larger is more responsive, but also less stable
 
     public int FANGS_UP_POSITION = 275;    // eg: Neverest 60
     public int FANGS_DOWN_POSITION = 0;
 
     public double TEST = 0;
+
+    public double lastHeading;
 
     /**
      * Constructor for LinearGyroOpMode sets initial COUNTS_PER_INCH
@@ -192,6 +199,8 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
 
         int newLeftTarget;
         int newRightTarget;
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
         int moveCounts;
         double max;
         double error;
@@ -207,12 +216,14 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             moveCounts = (int) (distance * COUNTS_PER_INCH);
             newLeftTarget = robot.leftBackDrive.getCurrentPosition() + moveCounts;
             newRightTarget = robot.rightBackDrive.getCurrentPosition() + moveCounts;
+            newLeftFrontTarget = robot.leftFrontDrive.getCurrentPosition() + moveCounts;
+            newRightFrontTarget = robot.rightFrontDrive.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
             robot.leftBackDrive.setTargetPosition(newLeftTarget);
-            robot.leftFrontDrive.setTargetPosition(newLeftTarget);
+            robot.leftFrontDrive.setTargetPosition(newLeftFrontTarget);
             robot.rightBackDrive.setTargetPosition(newRightTarget);
-            robot.rightFrontDrive.setTargetPosition(newRightTarget);
+            robot.rightFrontDrive.setTargetPosition(newRightFrontTarget);
 
             robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -232,8 +243,7 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                     (robot.leftBackDrive.isBusy() && robot.rightBackDrive.isBusy()) && robot.leftFrontDrive.isBusy() && robot.rightFrontDrive.isBusy() &&
-                    (Double.isNaN(robot.forwardDistance.getDistance(DistanceUnit.CM)) ||
-                            robot.forwardDistance.getDistance(DistanceUnit.CM) > frontDistance) &&
+                    (robot.getFrontDistance() > frontDistance) &&
                     (timeoutTimer.time() < timeout)) {
 
                 // adjust relative speed based on heading error.
@@ -261,9 +271,11 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
 
                 // Display drive status for the driver.
                 telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
-                telemetry.addData("Target", "%7d:%7d", newLeftTarget, newRightTarget);
-                telemetry.addData("Actual", "%7d:%7d", robot.leftBackDrive.getCurrentPosition(),
-                        robot.rightBackDrive.getCurrentPosition());
+                telemetry.addData("Front Target/Actual", "%7d/%7d\t%7d/%7d", newLeftFrontTarget, robot.leftFrontDrive.getCurrentPosition(), newRightFrontTarget, robot.rightFrontDrive.getCurrentPosition());
+                telemetry.addData("Back Target/Actual", "%7d/%7d\t%7d/%7d", newLeftTarget, robot.leftBackDrive.getCurrentPosition(), newRightTarget, robot.rightBackDrive.getCurrentPosition());
+//                telemetry.addData("Target Back", "%7d:%7d", newLeftTarget, newRightTarget);
+//                telemetry.addData("Actual", "%7d:%7d", robot.leftBackDrive.getCurrentPosition(),
+//                        robot.rightBackDrive.getCurrentPosition());
                 telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
                 telemetry.update();
             }
@@ -279,6 +291,8 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             robot.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            lastHeading = angle;
         }
     }
 
@@ -294,12 +308,19 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      *              If a relative angle is required, add/subtract from current heading.
      */
     public void gyroTurn(double speed, double angle) {
+        this.gyroTurn(speed, angle, 10);
+    }
+
+    public void gyroTurn(double speed, double angle, double timeout) {
+        ElapsedTime timeoutTimer = new ElapsedTime();
+        timeoutTimer.reset();
 
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF) && (timeoutTimer.time() < timeout)) {
             // Update telemetry & Allow time for other processes to run.
             telemetry.update();
         }
+        lastHeading = angle;
     }
 
     /**
@@ -325,10 +346,11 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         }
 
         // Stop all motion;
-        robot.leftBackDrive.setPower(0);
         robot.leftFrontDrive.setPower(0);
-        robot.rightBackDrive.setPower(0);
+        robot.leftBackDrive.setPower(0);
         robot.rightFrontDrive.setPower(0);
+        robot.rightBackDrive.setPower(0);
+        lastHeading = angle;
     }
 
     /**
@@ -363,10 +385,10 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         }
 
         // Send desired speeds to motors.
-        robot.leftBackDrive.setPower(leftSpeed);
-        robot.rightBackDrive.setPower(rightSpeed);
         robot.leftFrontDrive.setPower(leftSpeed);
+        robot.leftBackDrive.setPower(leftSpeed);
         robot.rightFrontDrive.setPower(rightSpeed);
+        robot.rightBackDrive.setPower(rightSpeed);
 
         // Display it for the driver.
         telemetry.addData("Target", "%5.2f", angle);
@@ -406,6 +428,30 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      */
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
+    }
+
+    public void scoot45(String direction){
+        double originalHeading = lastHeading;
+        double heading = originalHeading;
+        gyroDrive(DRIVE_SPEED, -10, heading);
+        heading += 45;
+        gyroTurn(TURN_SPEED, heading);
+        gyroDrive(DRIVE_SPEED, 14.1, heading);
+        heading = originalHeading;
+        gyroTurn(TURN_SPEED, heading);
+    }
+
+    public void scoot(String direction){
+        double originalHeading = lastHeading;
+        double heading = originalHeading;
+        gyroDrive(DRIVE_SPEED, -5, heading);
+        heading += 90;
+        gyroTurn(TURN_SPEED, heading);
+        gyroDrive(DRIVE_SPEED, 8.0, heading);
+        heading = originalHeading;
+        gyroTurn(TURN_SPEED, heading);
+        gyroHold(TURN_SPEED, heading, 0.5);
+        gyroDrive(DRIVE_SPEED, 5, heading, 2, 7);
     }
 
 }

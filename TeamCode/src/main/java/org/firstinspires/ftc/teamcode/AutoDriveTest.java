@@ -91,9 +91,12 @@ public class AutoDriveTest extends LinearGyroOpMode {
         }
 
         heading=0; //start at this heading
-        gyroDrive(DRIVE_SPEED, 30, heading);
-        gyroHold(DRIVE_SPEED, heading, .5);
-        gyroDrive(DRIVE_SPEED, -30, heading);
+        gyroDrive(DRIVE_SPEED, 36, heading, 10, 15);
+        gyroHold(DRIVE_SPEED, heading, 1);
+        scoot("left");
+        gyroHold(DRIVE_SPEED, heading, 1);
+        scoot("left");
+        gyroHold(DRIVE_SPEED, heading, 1);
 
         //
         telemetry.addData("Path", "Complete");

@@ -21,7 +21,6 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 
     double fangRelease;
     double fangGrab;
-    boolean isGripOpen;
     boolean bumperReleased;
     boolean armStickReleased = true;
 
@@ -36,7 +35,6 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
      * Describe this function...
      */
     private void initialize() {
-        isGripOpen = true;
         bumperReleased = true;
         fangRelease = 0.65;
         fangGrab = 0;
@@ -106,7 +104,7 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                 robot.rightBackDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
                 robot.rightFrontDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
 
-
+                // negative moves UP
                 if (gamepad2.left_stick_y < -robot.acceptableArmThumbPos) {
                     if (armStickReleased) {
                         robot.moveArmToPosition(robot.getArmIndex() + 1);
@@ -133,16 +131,18 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                     robot.armRotate.setPower(robot.armSpeed);
                 }
 
+                if (robot.isGripOpen() && bumperReleased && (robot.armIndex == 0) && robot.isBlockInRange() && robot.isBlockColor()) {
+//                    robot.closeGripper();
+                }
+
+                bumperReleased = bumperReleased || (!gamepad2.left_bumper);
                 if (gamepad2.left_bumper && bumperReleased) {
-                    if (isGripOpen) {
+                    if (robot.isGripOpen()) {
                         robot.closeGripper();
                     } else {
                         robot.openGripper();
                     }
-                    isGripOpen = !isGripOpen;
                     bumperReleased = false;
-                } else if (!gamepad2.left_bumper && !bumperReleased) {
-                    bumperReleased = true;
                 }
 
                 if (gamepad2.y == true) {
@@ -157,11 +157,12 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 //                    robot.fangs.setPower(0);
                 }
 
-                telemetry.addData("armPosition", robot.armRotate.getCurrentPosition());
-                telemetry.addData("armTargetPosition", robot.armPositions[robot.armIndex]);
-                telemetry.addData("armIndex", robot.getArmIndex());
-                telemetry.addData("leftPosition", robot.leftBackDrive.getCurrentPosition());
-                telemetry.addData("rightPosition", robot.rightBackDrive.getCurrentPosition());
+                telemetry.addData("front (left) (right)", String.format("(%,d) (%,d)", robot.leftFrontDrive.getCurrentPosition(), robot.rightFrontDrive.getCurrentPosition()));
+//                telemetry.addData("front (left) (right)", "("+robot.leftFrontDrive.getCurrentPosition()+") ("+robot.rightFrontDrive.getCurrentPosition()+")");
+                telemetry.addData("back  (left) (right)", "("+robot.leftBackDrive.getCurrentPosition()+") ("+robot.rightBackDrive.getCurrentPosition()+")");
+//                telemetry.addData("armPosition", );
+                telemetry.addData("Arm Index : Target : Position", robot.getArmIndex()+ " : "+ robot.armPositions[robot.armIndex] + " : " + robot.armRotate.getCurrentPosition());
+                telemetry.addData("Front Sensor Distance : Hue", String.format ("%,.2f : %,.2f", robot.getFrontDistance(),robot.getFrontColor()));
                 telemetry.addData("gripperPosition", robot.gripper.getPosition());
                 telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();
