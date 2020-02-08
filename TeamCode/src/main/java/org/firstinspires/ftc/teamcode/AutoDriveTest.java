@@ -91,7 +91,7 @@ public class AutoDriveTest extends LinearGyroOpMode {
         }
 
         heading=0; //start at this heading
-        gyroDrive(DRIVE_SPEED, 36, heading, 10, 15);
+        gyroDrive(DRIVE_SPEED, 36, heading, 10, 7);
         gyroHold(DRIVE_SPEED, heading, 1);
         scoot("left");
         gyroHold(DRIVE_SPEED, heading, 1);

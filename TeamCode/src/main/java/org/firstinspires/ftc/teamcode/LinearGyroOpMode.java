@@ -107,7 +107,10 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     public double DRIVE_SPEED = 0.4;     // Nominal speed for better accuracy.
+    public double AUTO_DRIVE_FAST = 1;     // Nominal speed for better accuracy.
+    public double AUTO_DRIVE_SLOW = 0.4;     // Nominal speed for better accuracy.
     public double TURN_SPEED = 0.6;     // Nominal half speed for better accuracy.
+    public double AUTO_TURN_SPEED = 0.6;     // Nominal half speed for better accuracy.
 
     public double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
     public double P_TURN_COEFF = 0.02;     // Larger is more responsive, but also less stable
@@ -178,19 +181,19 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         gyroDrive(speed, distance, angle, timeout, 0);
     }
 
-        /**
-         * Method to drive on a fixed compass bearing (angle), based on encoder counts.
-         * Move will stop if either of these conditions occur:
-         * 1) Move gets to the desired position
-         * 2) Driver stops the opmode running.
-         *
-         * @param speed    Target speed for forward motion.  Should allow for _/- variance for adjusting heading
-         * @param distance Distance (in inches) to move from current position.  Negative distance means move backwards.
-         * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
-         *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-         *                 If a relative angle is required, add/subtract from current heading.
-         * @param timeout  Number of seconds (can be fractional) before timing out, whether we get there or not
-         */
+    /**
+     * Method to drive on a fixed compass bearing (angle), based on encoder counts.
+     * Move will stop if either of these conditions occur:
+     * 1) Move gets to the desired position
+     * 2) Driver stops the opmode running.
+     *
+     * @param speed    Target speed for forward motion.  Should allow for _/- variance for adjusting heading
+     * @param distance Distance (in inches) to move from current position.  Negative distance means move backwards.
+     * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
+     *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                 If a relative angle is required, add/subtract from current heading.
+     * @param timeout  Number of seconds (can be fractional) before timing out, whether we get there or not
+     */
     public void gyroDrive(double speed,
                           double distance,
                           double angle,
@@ -430,7 +433,11 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    public void scoot45(String direction){
+    public boolean isSkystone() {
+        return (robot.getFrontColor() > 100 && robot.getFrontDistance() < 15);
+    }
+
+    public void scoot45(String direction) {
         double originalHeading = lastHeading;
         double heading = originalHeading;
         gyroDrive(DRIVE_SPEED, -10, heading);
@@ -441,17 +448,21 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         gyroTurn(TURN_SPEED, heading);
     }
 
-    public void scoot(String direction){
+    public void scoot(String direction) {
+        double turnAngle = 90;
+        if (direction.toLowerCase() == "right") {
+            turnAngle *= -1;
+        }
         double originalHeading = lastHeading;
         double heading = originalHeading;
-        gyroDrive(DRIVE_SPEED, -5, heading);
-        heading += 90;
+        gyroDrive(AUTO_DRIVE_SLOW, -5, heading);
+        heading += turnAngle;
         gyroTurn(TURN_SPEED, heading);
-        gyroDrive(DRIVE_SPEED, 8.0, heading);
+        gyroDrive(AUTO_DRIVE_SLOW, 8.0, heading, 1);
         heading = originalHeading;
         gyroTurn(TURN_SPEED, heading);
         gyroHold(TURN_SPEED, heading, 0.5);
-        gyroDrive(DRIVE_SPEED, 5, heading, 2, 7);
+        gyroDrive(AUTO_DRIVE_SLOW, 5, heading, 2, 6);
     }
 
 }

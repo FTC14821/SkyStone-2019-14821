@@ -16,9 +16,9 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
     CactusRobot robot = new CactusRobot(telemetry);
     RobotSettings settings = new RobotSettings();
 
-    private static final double fastSpeed = 0.6;
-    private static final double slowSpeed = 0.4;
-
+    private static final double fastSpeed = 1; //changed from .6, then to .8
+    private static final double slowSpeed = 0.6; //changed from .4, then to .5
+//hello
     double fangRelease;
     double fangGrab;
     boolean bumperReleased;

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * <p>
  * init() instantiate this in your opmode
  * CactusRobot robot = new CactusRobot();   // Use a CactusRobot's hardware
- * robot.init(hardwareMap);
+ * robot.init(hardwareMap);        yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeet
  * Then reference the hardware with things like
  * robot.leftBackDrive.setSpeed()
  */
@@ -54,7 +54,7 @@ public class CactusRobot {
     public int armIndex = 0;
     public double armSpeed = .5;
 
-    private static double gripClosePosition = .45;
+    private static double gripClosePosition = .48;
     private static double gripOpenPosition = 0;
     private boolean isGripperOpen;
 
@@ -161,7 +161,7 @@ public class CactusRobot {
     }
 
     public double getFrontDistance() {
-        return Double.isNaN(this.forwardDistance.getDistance(DistanceUnit.CM)) ? 999 : this.forwardDistance.getDistance(DistanceUnit.CM);
+        return Double.isNaN(this.forwardDistance.getDistance(DistanceUnit.CM)) ? 999 : this.forwardDistance.getDistance(DistanceUnit.CM) / 2;
     }
 
     public double getFrontColor() {
