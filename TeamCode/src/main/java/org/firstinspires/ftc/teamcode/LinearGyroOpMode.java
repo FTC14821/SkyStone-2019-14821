@@ -41,6 +41,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.awt.font.NumericShaper;
+
 /**
  * This is Team 14821 (Cactus Intelligence Agency) extension of LinearOpMode class that adds
  * functionality for GyroDrive, GyroTurn, and GyroHold which use the built-in IMU to drive
@@ -437,18 +439,36 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         return (robot.getFrontColor() > 100 && robot.getFrontDistance() < 15);
     }
 
-    public void scoot45(String direction) {
+    public void scootAngle(String direction, double angle) {
+        double turnAngle = (Math.abs(angle)<=90 && angle != 0) ? angle : 90; //default to 90
+        double minBack = 5; // minimum distance backwards to drive
+        double blockSize = 8; // width of the blocks
+
+        // calculate the distance backwards (dY) and alongthe hypotenuse (dH) for the angle we want to turn
+        // and avoid dividing by zero or infinity
+        double dY = turnAngle != 90 ? Math.abs(blockSize/Math.tan(turnAngle)) : 0; //how far back to we have to go to get our mark
+        double dH = turnAngle != 90 ? Math.abs(dY/Math.cos(turnAngle)) : 0;
+
+        if (direction.toLowerCase() == "right") {
+            turnAngle *= -1;
+        }
+
         double originalHeading = lastHeading;
         double heading = originalHeading;
-        gyroDrive(DRIVE_SPEED, -10, heading);
-        heading += 45;
-        gyroTurn(TURN_SPEED, heading);
-        gyroDrive(DRIVE_SPEED, 14.1, heading);
+
+        gyroDrive(AUTO_DRIVE_SLOW, -(minBack+dY), heading);
+        heading += turnAngle;
+        gyroTurn(AUTO_TURN_SPEED, heading);
+        gyroDrive(AUTO_DRIVE_SLOW, dH, heading, 1);
         heading = originalHeading;
-        gyroTurn(TURN_SPEED, heading);
+        gyroTurn(AUTO_TURN_SPEED, heading);
+        gyroHold(AUTO_TURN_SPEED, heading, 0.5);
+        gyroDrive(AUTO_DRIVE_SLOW, minBack, heading, 2, 6);
     }
 
+
     public void scoot(String direction) {
+
         double turnAngle = 90;
         if (direction.toLowerCase() == "right") {
             turnAngle *= -1;
@@ -457,11 +477,11 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         double heading = originalHeading;
         gyroDrive(AUTO_DRIVE_SLOW, -5, heading);
         heading += turnAngle;
-        gyroTurn(TURN_SPEED, heading);
+        gyroTurn(AUTO_TURN_SPEED, heading);
         gyroDrive(AUTO_DRIVE_SLOW, 8.0, heading, 1);
         heading = originalHeading;
-        gyroTurn(TURN_SPEED, heading);
-        gyroHold(TURN_SPEED, heading, 0.5);
+        gyroTurn(AUTO_TURN_SPEED, heading);
+        gyroHold(AUTO_TURN_SPEED, heading, 0.5);
         gyroDrive(AUTO_DRIVE_SLOW, 5, heading, 2, 6);
     }
 
