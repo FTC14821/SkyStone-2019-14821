@@ -89,7 +89,6 @@ public class AutoBlueScoot extends LinearGyroOpMode {
             telemetry.update();
         }
 
-        double HOLD=0.4; //standard hold time
         double longDistance = 38;
         double blockWidth = 8.0;
 
@@ -124,6 +123,7 @@ public class AutoBlueScoot extends LinearGyroOpMode {
         heading = 0;
         gyroTurn(AUTO_TURN_SPEED, heading);
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
+
         //drive up to the next stone and start looking
         gyroDrive(AUTO_DRIVE_SLOW, 8.0, heading,.5, 6);
         while (!isSkystone() && blockPosition < 4) {
@@ -131,7 +131,7 @@ public class AutoBlueScoot extends LinearGyroOpMode {
             blockPosition++;
         }
         robot.closeGripper();
-        gyroHold(AUTO_DRIVE_SLOW, heading, 1);
+        gyroHold(AUTO_DRIVE_SLOW, heading, 1); //wait for gripper to close
         robot.moveArmToPosition(1);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
         gyroDrive(AUTO_DRIVE_SLOW, -8.0, heading,.5);

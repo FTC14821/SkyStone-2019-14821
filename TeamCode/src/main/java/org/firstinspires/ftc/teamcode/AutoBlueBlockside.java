@@ -95,20 +95,20 @@ public class AutoBlueBlockside extends LinearGyroOpMode {
         robot.closeGripper();
         gyroHold(DRIVE_SPEED, heading, 1);
         robot.moveArmToPosition(1);
-        gyroHold(DRIVE_SPEED, heading, 0.5);
+        gyroHold(DRIVE_SPEED, heading, HOLD);
         gyroDrive(DRIVE_SPEED, -2.0, heading,.5);
-        gyroHold(DRIVE_SPEED, heading, .5);
+        gyroHold(DRIVE_SPEED, heading, HOLD);
 
         // turn right and drive to the other side
         heading = 90;    //LEFT turn postive, RIGHT turn negative
         gyroTurn(TURN_SPEED, heading);
-        gyroHold(TURN_SPEED, heading, 0.5);
+        gyroHold(TURN_SPEED, heading, HOLD);
         gyroDrive(DRIVE_SPEED*2, 40.0, heading, 3);
 
         // spit the block out by running grippers for 0.75 seconds
         robot.moveArmToPosition(0);
         robot.openGripper();
-        gyroHold(DRIVE_SPEED, heading, .5);
+        gyroHold(DRIVE_SPEED, heading, HOLD);
 
         gyroDrive(DRIVE_SPEED, -16.0, heading);
         gyroHold(DRIVE_SPEED, heading, 1);
