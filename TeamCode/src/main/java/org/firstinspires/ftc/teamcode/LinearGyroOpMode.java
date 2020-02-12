@@ -121,17 +121,15 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     public int FANGS_UP_POSITION = 275;    // eg: Neverest 60
     public int FANGS_DOWN_POSITION = 0;
 
-    static public double HOLD = 0.4; //standard hold time
+    static public double HOLD = 0.4; //standard hold time to wait for things to finish
+    //TODO - replace all the random hold times that are ~0.5 sec to use HOLD so we can tune as fast as possible
 
-    public double TEST = 0;
-
-    public double lastHeading;
+    public double lastHeading; //saves the most recent heading we drove or turned to
 
     /**
      * Constructor for LinearGyroOpMode sets initial COUNTS_PER_INCH
      */
     public LinearGyroOpMode() {
-        this.TEST = Math.random() * 100;
         this.calcCountsPerInch();
     }
 
