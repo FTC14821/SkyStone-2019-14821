@@ -83,7 +83,6 @@ public class CactusRobot {
         forwardColor = hwMap.get(ColorSensor.class, "forwardColorDistance");
         forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
 
-        frontDistance = hwMap.get(DistanceSensor.class, "frontDistance");
 
         downColor = hwMap.get(ColorSensor.class, "downColorDistance");
         downDistance = hwMap.get(DistanceSensor.class, "downColorDistance");

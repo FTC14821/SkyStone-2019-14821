@@ -163,7 +163,6 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 //                telemetry.addData("armPosition", );
                 telemetry.addData("Arm Index : Target : Position", robot.getArmIndex()+ " : "+ robot.armPositions[robot.armIndex] + " : " + robot.armRotate.getCurrentPosition());
                 telemetry.addData("Front Color/Distance Distance : Color", String.format ("%,.2f : %,.2f", robot.getFrontDistance(),robot.getFrontColor()));
-                telemetry.addData("Front Color/Distance Distance : Color", String.format ("%,.2f : %,.2f", robot.getFrontDistance(),robot.getFrontColor()));
                 telemetry.addData("gripperPosition", robot.gripper.getPosition());
                 telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();
