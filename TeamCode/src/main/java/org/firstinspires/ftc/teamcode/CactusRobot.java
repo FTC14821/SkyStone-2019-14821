@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
+import com.qualcomm.hardware.stmicroelectronics.VL53L0X;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,6 +36,8 @@ public class CactusRobot {
     public DcMotor fangs = null;
     public Servo gripper = null;
     public CRServo rightGripper = null;
+
+    public DistanceSensor frontDistance = null;
 
     public ColorSensor forwardColor = null;
     public DistanceSensor forwardDistance = null;
@@ -79,6 +82,8 @@ public class CactusRobot {
         // Color Sensor
         forwardColor = hwMap.get(ColorSensor.class, "forwardColorDistance");
         forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
+
+        frontDistance = hwMap.get(DistanceSensor.class, "frontDistance");
 
         downColor = hwMap.get(ColorSensor.class, "downColorDistance");
         downDistance = hwMap.get(DistanceSensor.class, "downColorDistance");
