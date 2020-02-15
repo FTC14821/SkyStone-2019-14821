@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name = " Teleop: FTC 14821", group = "any")
+@TeleOp(name = " 14821 Main Teleop", group = "ANY")
 public class FTC14821_Teleop extends LinearGyroOpMode {
 
     // create an instance of our robot hardware
@@ -18,7 +18,7 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 
     private static final double fastSpeed = 1; //changed from .6, then to .8
     private static final double slowSpeed = 0.6; //changed from .4, then to .5
-//hello
+//hello me is easter egg dude
     double fangRelease;
     double fangGrab;
     boolean bumperReleased;
@@ -162,7 +162,7 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                 telemetry.addData("back  (left) (right)", "("+robot.leftBackDrive.getCurrentPosition()+") ("+robot.rightBackDrive.getCurrentPosition()+")");
 //                telemetry.addData("armPosition", );
                 telemetry.addData("Arm Index : Target : Position", robot.getArmIndex()+ " : "+ robot.armPositions[robot.armIndex] + " : " + robot.armRotate.getCurrentPosition());
-                telemetry.addData("Front Color/Distance Distance : Color", String.format ("%,.2f : %,.2f", robot.getFrontDistance(),robot.getFrontColor()));
+                telemetry.addData("Front Color/Distance Distance : Color", String.format ("%,.2f : %,.2f", robot.getForwardDistance(),robot.getForwardColor()));
                 telemetry.addData("gripperPosition", robot.gripper.getPosition());
                 telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();

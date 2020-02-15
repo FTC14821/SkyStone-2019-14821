@@ -33,7 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Auto RED Scoot", group = "RED")
+@Autonomous(name = "Blue Red Skystones", group = "RED")
 public class AutoRedScoot extends LinearGyroOpMode {
 
     @Override

@@ -33,7 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Auto BLUE Blockside", group = "RED")
+@Autonomous(name = "Blue Get First Block Only", group = "BLUE")
 public class AutoBlueBlockside extends LinearGyroOpMode {
 
     @Override

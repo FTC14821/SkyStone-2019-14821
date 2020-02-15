@@ -33,7 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Auto Drive Test", group = "BLUE")
+@Autonomous(name = "TEST Auto Drive", group = "TEST")
 public class AutoDriveTest extends LinearGyroOpMode {
 
     @Override
@@ -91,11 +91,19 @@ public class AutoDriveTest extends LinearGyroOpMode {
         }
 
         heading=0; //start at this heading
-        gyroDrive(DRIVE_SPEED, 36, heading, 10, 7);
-        gyroHold(DRIVE_SPEED, heading, 1);
+//        gyroDrive(DRIVE_SPEED, 36, heading, 10, 7);
+//        gyroHold(DRIVE_SPEED, heading, 1);
+//        scootAngle("left",90);
         scoot("left");
         gyroHold(DRIVE_SPEED, heading, 1);
         scoot("left");
+//        scootAngle("left",75);
+        gyroHold(DRIVE_SPEED, heading, 1);
+        scoot("left");
+//        scootAngle("left",45);
+        gyroHold(DRIVE_SPEED, heading, 1);
+        scoot("left");
+//        scootAngle("left",30);
         gyroHold(DRIVE_SPEED, heading, 1);
 
         //

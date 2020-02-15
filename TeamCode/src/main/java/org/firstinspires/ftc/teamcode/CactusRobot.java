@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
-import com.qualcomm.hardware.stmicroelectronics.VL53L0X;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -28,6 +28,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 public class CactusRobot {
 
+    static final double MAX_VALID_DISTANCE = 20; //maximum valid distance from color/distance sensor
+
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
     public DcMotor leftFrontDrive = null;
@@ -37,10 +39,10 @@ public class CactusRobot {
     public Servo gripper = null;
     public CRServo rightGripper = null;
 
-    public DistanceSensor frontDistance = null;
-
     public ColorSensor forwardColor = null;
     public DistanceSensor forwardDistance = null;
+    private SampleData forwardSampledDistance = null;
+
     float hsvValues[] = {0F, 0F, 0F};       // hsvValues is an array that will hold the hue, saturation, and value information.
     final float values[] = hsvValues;       // values is a reference to the hsvValues array.
 
@@ -57,8 +59,9 @@ public class CactusRobot {
     public int armIndex = 0;
     public double armSpeed = .5;
 
-    private static double gripClosePosition = .48;
-    private static double gripOpenPosition = 0;
+    private static double gripStartPosition = 0;
+    private static double gripOpenPosition = 0.3;   // optimal is 0.1 and closed at 0.55
+    private static double gripClosePosition = 0.50;  //
     private boolean isGripperOpen;
 
     HardwareMap hwMap = null;
@@ -67,9 +70,6 @@ public class CactusRobot {
     private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    /* don't have a blank constructor anymore, needs a reference to the telemetry object */
-//    public CactusRobot() {
-//    }
 
     public CactusRobot(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -83,9 +83,10 @@ public class CactusRobot {
         forwardColor = hwMap.get(ColorSensor.class, "forwardColorDistance");
         forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
 
+        forwardSampledDistance = new SampleData(5);
 
-        downColor = hwMap.get(ColorSensor.class, "downColorDistance");
-        downDistance = hwMap.get(DistanceSensor.class, "downColorDistance");
+//        downColor = hwMap.get(ColorSensor.class, "downColorDistance");
+//        downDistance = hwMap.get(DistanceSensor.class, "downColorDistance");
 
         // Define and Initialize Motors
         leftBackDrive = hwMap.get(DcMotor.class, "leftBackDrive");
@@ -95,23 +96,22 @@ public class CactusRobot {
 
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fangs = hwMap.get(DcMotor.class, "fangMotor");
         fangs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         armRotate = hwMap.get(DcMotor.class, "armRotate");
-        armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armRotate.setDirection(DcMotor.Direction.REVERSE);
-        armRotate.setPower(0);
         armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Set all motors to zero power
         leftBackDrive.setPower(0);
@@ -125,10 +125,9 @@ public class CactusRobot {
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         fangs.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
@@ -139,7 +138,7 @@ public class CactusRobot {
         moveArmToPosition(armIndex);
         closeGripper();
         this.waitFor(0.5);
-        openGripper();
+        initGripper();
         this.waitFor(0.5);
     }
 
@@ -164,11 +163,20 @@ public class CactusRobot {
 
     }
 
-    public double getFrontDistance() {
-        return Double.isNaN(this.forwardDistance.getDistance(DistanceUnit.CM)) ? 999 : this.forwardDistance.getDistance(DistanceUnit.CM) / 2;
+    public double getForwardDistance() {
+        double reading = this.forwardDistance.getDistance(DistanceUnit.CM);
+        forwardSampledDistance.add((Double.isNaN(reading) || (reading > MAX_VALID_DISTANCE)) ? 999 : reading / 2);
+        return forwardSampledDistance.avg;
+//        return (Double.isNaN(reading) || (reading > MAX_VALID_DISTANCE)) ? 999 : reading / 2;
     }
 
-    public double getFrontColor() {
+    public double getDownDistance() {
+        return 999;
+//        double reading = this.downDistance.getDistance(DistanceUnit.CM);
+//        return Double.isNaN(reading) ? 999 : reading / 2;
+    }
+
+    public double getForwardColor() {
         Color.RGBToHSV((int) (forwardColor.red() * SCALE_FACTOR),
                 (int) (forwardColor.green() * SCALE_FACTOR),
                 (int) (forwardColor.blue() * SCALE_FACTOR),
@@ -177,15 +185,20 @@ public class CactusRobot {
     }
 
     public boolean isBlockColor() {
-        return (getFrontDistance() < 15 && Math.abs(40 - this.getFrontColor()) <= 10);
+        return (getForwardDistance() < 10 && Math.abs(40 - this.getForwardColor()) <= 10);
     }
 
     public boolean isBlockInRange() {
-        return (getFrontDistance() <= 6);
+        return (getForwardDistance() <= 6);
     }
 
     public void releaseBlock() {
         this.openGripper();
+    }
+
+    public void initGripper() {
+        gripper.setPosition(gripStartPosition);
+        isGripperOpen = true;
     }
 
     public void openGripper() {
@@ -220,16 +233,18 @@ public class CactusRobot {
         double sample = 0;
 
         ElapsedTime timeoutTimer = new ElapsedTime();
-        timeoutTimer.reset();
 
         armRotate.setPower(0);
+        armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armRotate.setPower(.2);
+        armRotate.setPower(0.3);
         this.waitFor(0.25);
         armRotate.setPower(0);
         this.waitFor(0.25);
         armRotate.setPower(-0.1);
+
         prevPosition = armRotate.getCurrentPosition();
+        timeoutTimer.reset();
         while (stillMoving && timeoutTimer.time() < 10) {
             telemetry.addData("armPosition", armRotate.getCurrentPosition());
             telemetry.addData("delta position", sample);
@@ -243,6 +258,7 @@ public class CactusRobot {
             }
         }
         // back up a little bit to releive strain
+        armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armRotate.setPower(.2);
         this.waitFor(0.25);
         armRotate.setPower(0);

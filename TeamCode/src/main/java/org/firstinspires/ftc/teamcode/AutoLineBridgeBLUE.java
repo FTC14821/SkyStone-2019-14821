@@ -33,7 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Auto Line Bridge BLUE", group = "BLUE")
+@Autonomous(name = "Blue Park on Bridge Line from Foundation Side", group = "BLUE")
 public class AutoLineBridgeBLUE extends LinearGyroOpMode {
 
     @Override

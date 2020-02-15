@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-@Autonomous(name = "Auto Line Bridge RED", group = "RED")
+@Autonomous(name = "Red Park on Bridge Line from Foundation Side", group = "RED")
 public class AutoLineBridgeRED extends LinearGyroOpMode {
 
     @Override

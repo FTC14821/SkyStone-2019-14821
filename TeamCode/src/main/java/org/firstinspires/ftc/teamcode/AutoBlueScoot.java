@@ -33,7 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Auto BLUE Scoot", group = "Blue")
+@Autonomous(name = "Blue Two Skystones", group = "Blue")
 public class AutoBlueScoot extends LinearGyroOpMode {
 
     @Override
@@ -111,37 +111,33 @@ public class AutoBlueScoot extends LinearGyroOpMode {
         heading = 90;    //LEFT turn postive, RIGHT turn negative
         gyroTurn(AUTO_TURN_SPEED, heading);
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
-        gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * blockWidth, heading, 3);
+        gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * blockWidth, heading, 10);
         // spit the block out by running grippers for 0.75 seconds
         robot.moveArmToPosition(0);
         robot.openGripper();
 
         // now go  back and get next skystone
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
-        blockPosition = 3;
-        gyroDrive(AUTO_DRIVE_FAST, -(longDistance + blockPosition * blockWidth), heading, 6);
+        blockPosition += 3;
+        gyroDrive(AUTO_DRIVE_FAST, -(longDistance + blockPosition * blockWidth), heading, 10);
         heading = 0;
         gyroTurn(AUTO_TURN_SPEED, heading);
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
 
         //drive up to the next stone and start looking
-        gyroDrive(AUTO_DRIVE_SLOW, 8.0, heading,.5, 6);
-        while (!isSkystone() && blockPosition < 4) {
-            scoot("right");
-            blockPosition++;
-        }
+        gyroDrive(AUTO_DRIVE_SLOW, 8.0, heading,2, 6);
         robot.closeGripper();
         gyroHold(AUTO_DRIVE_SLOW, heading, 1); //wait for gripper to close
         robot.moveArmToPosition(1);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
-        gyroDrive(AUTO_DRIVE_SLOW, -8.0, heading,.5);
+        gyroDrive(AUTO_DRIVE_SLOW, -8.0, heading,2);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
 
         // turn right and drive to the other side
         heading = 90;    //LEFT turn postive, RIGHT turn negative
         gyroTurn(AUTO_TURN_SPEED, heading);
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
-        gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * blockWidth, heading, 3);
+        gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * blockWidth, heading, 10);
         // spit the block out by running grippers for 0.75 seconds
         robot.moveArmToPosition(0);
         robot.openGripper();

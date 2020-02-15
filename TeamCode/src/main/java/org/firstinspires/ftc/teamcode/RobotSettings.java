@@ -34,7 +34,7 @@ public class RobotSettings {
     public double autoTurnCoefficient = 0.1; //large is more responsive, but also less stable
     public double autoDriveCoefficient = 0.15; //large is more responsive, but also less stable
 
-    public double driveEncoderCountsPerRev = 536;   //goBilda "fast" motors
+    public double driveEncoderCountsPerRev = 753.2;   //goBilda "fast" motors
     public double driveGearRatio = 1.0; //Make < 1.0 f geared up
     public double driveWheelDiameter = 4.0;     //diameter of wheel in inches
 

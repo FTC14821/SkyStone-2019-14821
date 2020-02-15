@@ -33,7 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Auto Line WALL Drive Straight", group = "Any")
+@Autonomous(name = "Drive Straight To Line Either Color", group = "Any")
 public class AutoLineWall extends LinearGyroOpMode {
 
 
