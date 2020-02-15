@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class SampleData {
+public class DataSampler {
     private double[] data;
     private int samples;
     private int actualSamples;
@@ -8,8 +8,8 @@ public class SampleData {
     public double sum;
     public double avg;
 
-    SampleData(int count) {
-        samples = count <= 1 ? 2 : count;
+    DataSampler(int numberOfSamples) {
+        samples = numberOfSamples <= 1 ? 2 : numberOfSamples;
         data = new double[samples];
         this.clear();
     }

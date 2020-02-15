@@ -88,7 +88,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name = "TEST Pushbot: Auto Drive By Gyro", group = "TEST")
 @Disabled
-public class ExampleGyro extends LinearOpMode {
+public class TEST_ExampleGyro extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot robot = new HardwarePushbot();   // Use a Pushbot's hardware

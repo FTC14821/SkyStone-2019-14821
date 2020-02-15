@@ -29,90 +29,21 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "Blue Get First Block Only", group = "BLUE")
-public class AutoBlueBlockside extends LinearGyroOpMode {
+public class AutoBlueBlockside extends LinearAutoGyroOpMode {
 
     @Override
     public void runOpMode() {
 
-        double heading = 0;
+        initOpMode();
 
-        /*
-         * Initialize the standard drive system variables.
-         * The init() method of the hardware class does most of the work here
-         */
-        robot.init(hardwareMap);
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        // Create new IMU Parameters object.
-        imuParameters = new BNO055IMU.Parameters();
-        // Use degrees as angle unit.
-        imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        // Express acceleration as m/s^2.
-        imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        // Disable logging.
-        imuParameters.loggingEnabled = false;
-        // Initialize IMU.
-        imu.initialize(imuParameters);
-
-        // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
-        robot.leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-
-        // gyro.calibrate();
-
-        // make sure the gyro is calibrated before continuing
-        //while (!isStopRequested() && gyro.isCalibrating())  {
-        // sleep(50);
-        //idle();
-        //}
-
-        imu.startAccelerationIntegration(null, null, 1000);
-
-        telemetry.addData(">", "Robot Ready.");    //
-        telemetry.update();
-
-        robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
-//            telemetry.addData(">", "Robot Heading = %d", imu.getIntegratedZValue());
+            telemetry.addData(">", "Robot Ready.");    //
             telemetry.update();
         }
 
-
-        heading = 0; //start at this heading
-        robot.openGripper();
-        gyroDrive(DRIVE_SPEED, 32.0, heading, 10, 6);
-        robot.closeGripper();
-        gyroHold(DRIVE_SPEED, heading, 1);
-        robot.moveArmToPosition(1);
-        gyroHold(DRIVE_SPEED, heading, HOLD);
-        gyroDrive(DRIVE_SPEED, -2.0, heading,.5);
-        gyroHold(DRIVE_SPEED, heading, HOLD);
-
-        // turn right and drive to the other side
-        heading = 90;    //LEFT turn postive, RIGHT turn negative
-        gyroTurn(TURN_SPEED, heading);
-        gyroHold(TURN_SPEED, heading, HOLD);
-        gyroDrive(DRIVE_SPEED*2, 40.0, heading, 3);
-
-        // spit the block out by running grippers for 0.75 seconds
-        robot.moveArmToPosition(0);
-        robot.openGripper();
-        gyroHold(DRIVE_SPEED, heading, HOLD);
-
-        gyroDrive(DRIVE_SPEED, -16.0, heading);
-        gyroHold(DRIVE_SPEED, heading, 1);
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        autoGetFirstBlock(Alliance.BLUE);
     }
 }

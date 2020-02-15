@@ -12,48 +12,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @TeleOp(name = " 14821 Main Teleop", group = "ANY")
 public class FTC14821_Teleop extends LinearGyroOpMode {
 
-    // create an instance of our robot hardware
-    CactusRobot robot = new CactusRobot(telemetry);
     RobotSettings settings = new RobotSettings();
 
-    private static final double fastSpeed = 1; //changed from .6, then to .8
-    private static final double slowSpeed = 0.6; //changed from .4, then to .5
-//hello me is easter egg dude
     double fangRelease;
     double fangGrab;
     boolean bumperReleased;
     boolean armStickReleased = true;
 
-    // The IMU sensor object
-    BNO055IMU imu;
 
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
-
-    /**
-     * Describe this function...
-     */
-    private void initialize() {
-        bumperReleased = true;
-        fangRelease = 0.65;
-        fangGrab = 0;
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//    parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-//    parameters.loggingEnabled      = true;
-//    parameters.loggingTag          = "IMU";
-//    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-    }
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -65,17 +34,21 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
         boolean savingSettings = false;
         int absoluteArmPosition = 0;
 
-        robot.init(hardwareMap);
+//        robot.init(hardwareMap);
         /*
          * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
          * TODO Use the values from the settings object in the rest of our code
          */
         settings.readSettings();
 
-        // Put initialization blocks here.
-        initialize();
+        bumperReleased = true;
+        fangRelease = 0.65;
+        fangGrab = 0;
+
         waitForStart();
         if (opModeIsActive()) {
+            initOpMode();
+
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Hold "start", "back" and "y" to save current settings

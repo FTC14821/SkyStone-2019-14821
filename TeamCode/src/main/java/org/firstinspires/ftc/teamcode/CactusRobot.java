@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -41,7 +40,7 @@ public class CactusRobot {
 
     public ColorSensor forwardColor = null;
     public DistanceSensor forwardDistance = null;
-    private SampleData forwardSampledDistance = null;
+    private DataSampler forwardSampledDistance = null;
 
     float hsvValues[] = {0F, 0F, 0F};       // hsvValues is an array that will hold the hue, saturation, and value information.
     final float values[] = hsvValues;       // values is a reference to the hsvValues array.
@@ -60,8 +59,8 @@ public class CactusRobot {
     public double armSpeed = .5;
 
     private static double gripStartPosition = 0;
-    private static double gripOpenPosition = 0.3;   // optimal is 0.1 and closed at 0.55
-    private static double gripClosePosition = 0.50;  //
+    private static double gripOpenPosition = 0.1;   // optimal is 0.1 and closed at 0.55
+    private static double gripClosePosition = 0.55;  //
     private boolean isGripperOpen;
 
     HardwareMap hwMap = null;
@@ -83,7 +82,7 @@ public class CactusRobot {
         forwardColor = hwMap.get(ColorSensor.class, "forwardColorDistance");
         forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
 
-        forwardSampledDistance = new SampleData(5);
+        forwardSampledDistance = new DataSampler(5);
 
 //        downColor = hwMap.get(ColorSensor.class, "downColorDistance");
 //        downDistance = hwMap.get(DistanceSensor.class, "downColorDistance");

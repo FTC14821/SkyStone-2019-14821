@@ -56,7 +56,7 @@ import java.util.Locale;
  */
 @TeleOp(name = "TEST BNO055 IMU", group = "TEST")
 @Disabled                            // Comment this out to add to the opmode list
-public class IMUTest extends LinearOpMode
+public class TEST_IMUTest extends LinearOpMode
 {
     //----------------------------------------------------------------------------------------------
     // State

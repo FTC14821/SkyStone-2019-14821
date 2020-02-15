@@ -34,62 +34,20 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "TEST Auto Drive", group = "TEST")
-public class AutoDriveTest extends LinearGyroOpMode {
+public class AutoDriveTest extends LinearAutoGyroOpMode {
 
     @Override
     public void runOpMode() {
 
-        double heading = 0;
-
-        /*
-         * Initialize the standard drive system variables.
-         * The init() method of the hardware class does most of the work here
-         */
-        robot.init(hardwareMap);
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        // Create new IMU Parameters object.
-        imuParameters = new BNO055IMU.Parameters();
-        // Use degrees as angle unit.
-        imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        // Express acceleration as m/s^2.
-        imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        // Disable logging.
-        imuParameters.loggingEnabled = false;
-
-        // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
-        robot.leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-
-        // Initialize IMU.
-        // this will automatically calibrate the gyro
-        imu.initialize(imuParameters);
-
-        // make sure the gyro is calibrated before continuing
-// TODO Leftover loop from the original gyro example, but untested for the IMU
-//        while (!isStopRequested() && !imu.isGyroCalibrated()) {
-//            sleep(50);
-//            idle();
-//        }
-
-        imu.startAccelerationIntegration(null, null, 1000);
-
-        telemetry.addData(">", "Robot Ready.");    //
-        telemetry.update();
-
-        robot.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        initOpMode();
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
-//            telemetry.addData(">", "Robot Heading = %d", imu.getIntegratedZValue());
+            telemetry.addData(">", "Robot Ready.");    //
             telemetry.update();
         }
 
+        double heading = 0;
         heading=0; //start at this heading
 //        gyroDrive(DRIVE_SPEED, 36, heading, 10, 7);
 //        gyroHold(DRIVE_SPEED, heading, 1);

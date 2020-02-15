@@ -86,9 +86,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //@Autonomous(name = "Cactus: Auto BLUE Blockside", group = "BLUE")
 public abstract class LinearGyroOpMode extends LinearOpMode {
 
+    enum Alliance {
+        BLUE(0), RED(1);
+        public final byte bVal;
+
+        Alliance(int i) {
+            bVal = (byte) i;
+        }
+    }
+
     /* Declare OpMode members. */
     public CactusRobot robot = new CactusRobot(telemetry);   // Use a Pushbot's hardware
-
 
     //    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
     public BNO055IMU imu;
@@ -147,6 +155,37 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         this.WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_INCHES;
         this.calcCountsPerInch();
     }
+
+    public void initOpMode() {
+        /*
+         * Initialize the standard drive system variables.
+         * The init() method of the hardware class does most of the work here
+         */
+        Log.d("Constructor", "starting robot.init");
+        robot.init(hardwareMap);
+
+        telemetry.addData(">", "Calibrating IMU");    //
+        telemetry.update();
+
+        Log.d("Constructor", "starting IMU");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        // Create new IMU Parameters object.
+        imuParameters = new BNO055IMU.Parameters();
+        // Use degrees as angle unit.
+        imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        // Express acceleration as m/s^2.
+        imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        // Disable logging.
+        imuParameters.loggingEnabled = false;
+        // Initialize IMU.
+        imu.initialize(imuParameters);
+
+        imu.startAccelerationIntegration(null, null, 1000);
+
+        telemetry.addData(">", "OpMode Initialized.");    //
+        telemetry.update();
+    }
+
 
     public void setCOUNTS_PER_MOTOR_REV(double COUNTS_PER_MOTOR_REV) {
         this.COUNTS_PER_MOTOR_REV = COUNTS_PER_MOTOR_REV;
@@ -278,7 +317,7 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
                     rightSpeed /= max;
                 }
 
-                leftSpeed= Range.clip(Math.abs(leftSpeed), 0.05, 1.0);
+                leftSpeed = Range.clip(Math.abs(leftSpeed), 0.05, 1.0);
                 rightSpeed = Range.clip(Math.abs(rightSpeed), 0.05, 1.0);
 
                 Log.d("gyrodrive", "leftSpeed");
@@ -525,3 +564,4 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     }
 
 }
+
