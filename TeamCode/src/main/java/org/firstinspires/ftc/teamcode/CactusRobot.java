@@ -300,7 +300,7 @@ public class CactusRobot {
             telemetry.update();
             if (timeoutTimer.time() >= nextSampleTime) {
                 sample = Math.abs(armRotate.getCurrentPosition() - prevPosition);
-                stillMoving = (sample > 0 || nextSampleTime == sampleInterval);
+                stillMoving = (sample > 5 || nextSampleTime == sampleInterval);
                 prevPosition = armRotate.getCurrentPosition();
                 nextSampleTime = timeoutTimer.time() + sampleInterval;
             }
