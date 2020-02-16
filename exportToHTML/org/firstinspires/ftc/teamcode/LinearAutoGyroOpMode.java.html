@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>LinearAutoGyroOpMode.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000000;}
+.s1 { color: #000080; font-weight: bold;}
+.s2 { color: #0000ff;}
+.s3 { color: #008000; font-weight: bold;}
+.s4 { color: #808080; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+LinearAutoGyroOpMode.java</font>
+</center></td></tr></table>
+<pre>
+
+    <span class="s1">public void </span>autoTwoSkystones(Alliance color) {
+        <span class="s1">double </span>heading = <span class="s2">0</span>;
+        <span class="s1">double </span>blockPosition;
+        <span class="s1">double </span>longDistance = <span class="s2">38</span>;
+        <span class="s1">double </span>blockWidth = <span class="s2">8.0</span>;
+
+        String scootDirection = (color == Alliance.BLUE) ? <span class="s3">&quot;right&quot; </span>: <span class="s3">&quot;left&quot;</span>;
+        <span class="s1">int </span>turnDirection = (color == Alliance.BLUE) ? <span class="s2">1 </span>: -<span class="s2">1</span>;
+
+        heading = <span class="s2">0</span>; <span class="s4">//start at this heading</span>
+        robot.openGripper();
+        gyroDrive(AUTO_DRIVE_SLOW, <span class="s2">28</span>, heading, <span class="s2">10</span>, <span class="s2">10</span>);
+        gyroDrive(AUTO_DRIVE_SLOW*<span class="s2">0.75</span>, <span class="s2">4</span>, heading, <span class="s2">10</span>, <span class="s2">10</span>);
+        blockPosition = <span class="s2">0</span>;
+        <span class="s1">while </span>(!isSkystone() &amp;&amp; blockPosition &lt; <span class="s2">2</span>) {
+            scoot(scootDirection);
+            blockPosition++;
+        }
+        robot.closeGripper();
+        gyroHold(AUTO_DRIVE_SLOW, heading, <span class="s2">1</span>);
+        robot.moveArmToPosition(<span class="s2">1</span>);
+        gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
+        gyroDrive(AUTO_DRIVE_SLOW, -<span class="s2">8.0</span>, heading, <span class="s2">1</span>);
+        gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
+
+        <span class="s4">// turn right and drive to the other side</span>
+        heading = <span class="s2">90 </span>* turnDirection;    <span class="s4">//LEFT turn postive, RIGHT turn negative</span>
+        gyroTurn(AUTO_TURN_SPEED, heading);
+        gyroHold(AUTO_TURN_SPEED, heading, HOLD);
+        gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * blockWidth, heading, <span class="s2">10</span>);
+        <span class="s4">// spit the block out by running grippers for 0.75 seconds</span>
+        robot.openGripper();
+        gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
+
+        <span class="s4">// now go  back and get next skystone</span>
+        blockPosition = (blockPosition &lt; <span class="s2">2</span>) ? blockPosition+<span class="s2">3 </span>: <span class="s2">4</span>;
+
+        gyroDrive(AUTO_DRIVE_FAST, -(longDistance + blockPosition * blockWidth), heading, <span class="s2">10</span>);
+        robot.moveArmToPosition(<span class="s2">0</span>); <span class="s4">//lower arm</span>
+        heading = <span class="s2">0</span>;
+        gyroTurn(AUTO_TURN_SPEED, heading);
+        gyroHold(AUTO_TURN_SPEED, heading, HOLD);
+
+        <span class="s4">//drive up to the next stone and start looking</span>
+        gyroDrive(AUTO_DRIVE_SLOW*<span class="s2">0.75</span>, <span class="s2">8.0</span>, heading, <span class="s2">2</span>, <span class="s2">10</span>);
+        robot.closeGripper();
+        gyroHold(AUTO_DRIVE_SLOW, heading, <span class="s2">1</span>); <span class="s4">//wait for gripper to close</span>
+        robot.moveArmToPosition(<span class="s2">1</span>);
+        gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
+        gyroDrive(AUTO_DRIVE_SLOW, -<span class="s2">8.0</span>, heading, <span class="s2">2</span>);
+        gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
+
+        <span class="s4">// turn right and drive to the other side</span>
+        heading = <span class="s2">90 </span>* turnDirection;    <span class="s4">//LEFT turn postive, RIGHT turn negative</span>
+        gyroTurn(AUTO_TURN_SPEED, heading);
+        gyroHold(AUTO_TURN_SPEED, heading, HOLD);
+        gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * blockWidth, heading, <span class="s2">10</span>);
+        <span class="s4">// spit the block out by running grippers for 0.75 seconds</span>
+        robot.moveArmToPosition(<span class="s2">0</span>);
+        robot.openGripper();
+
+        <span class="s4">//Now go to the line</span>
+        // spit the block out by running grippers for 0.75 seconds
+        gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
+
+        gyroDrive(AUTO_DRIVE_SLOW, -<span class="s2">16.0</span>, heading);
+        gyroHold(AUTO_DRIVE_SLOW, heading, <span class="s2">1</span>);
+        telemetry.addData(<span class="s3">&quot;Path&quot;</span>, <span class="s3">&quot;Complete&quot;</span>);
+        telemetry.update();
+
+    }</pre>
+</body>
+</html>

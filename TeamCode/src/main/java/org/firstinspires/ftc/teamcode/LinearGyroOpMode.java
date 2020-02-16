@@ -46,10 +46,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * This is Team 14821 (Cactus Intelligence Agency) extension of LinearOpMode class that adds
  * functionality for GyroDrive, GyroTurn, and GyroHold which use the built-in IMU to drive
  * to/on a specific heading.
- * <p>
- * LinearGyroOpMode class implements
- * CactusRobot robot
- * <p>
+ * <p>This is used by autonomous opmodes and also teleop</p>
+ *
+ * @author team14821 Cactus Intelligence Agency
  * <p>
  * This file illustrates the concept of driving a path based on Gyro heading and encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
@@ -94,6 +93,8 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             bVal = (byte) i;
         }
     }
+
+    static final double SKYSTONE_HUE = 80; // minimum hue for the skystone
 
     /* Declare OpMode members. */
     public CactusRobot robot = new CactusRobot(telemetry);   // Use a Pushbot's hardware
@@ -314,7 +315,7 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
                 leftSpeed = Range.clip(Math.abs(leftSpeed), 0.05, 1.0);
                 rightSpeed = Range.clip(Math.abs(rightSpeed), 0.05, 1.0);
 
-                Log.d("gyrodrive", "leftSpeed");
+//                Log.d("gyrodrive", "leftSpeed="+leftSpeed+", rightSpeed="+rightSpeed);
 
                 robot.leftBackDrive.setPower(leftSpeed);
                 robot.leftFrontDrive.setPower(leftSpeed);
@@ -338,10 +339,6 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
                 isFrontDistance = (robot.getForwardDistance() <= frontDistance);
                 isTimeout = (timeoutTimer.time() >= timeout);
             }
-            Log.d("gyrodrive", "isBusy " + isBusy);
-            Log.d("gyrodrive", "isCloseEnough " + isCloseEnough);
-            Log.d("gyrodrive", "isFrontDistance " + isFrontDistance);
-            Log.d("gyrodrive", "isTimeout " + isTimeout);
 
             // Stop all motion;
             robot.leftBackDrive.setPower(0);
@@ -354,6 +351,16 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             robot.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            Log.d("gyroDrive","Exit Reason: " + (!isBusy ? "Motors Stopped, " : "")
+                    + (isCloseEnough ? "Close Enough, " : "")
+                    + (isFrontDistance ? "Front Distance Sensor, " : "")
+                    + (isTimeout ? "Timeout" : ""));
+
+//            Log.d("gyrodrive", "isBusy " + isBusy);
+//            Log.d("gyrodrive", "isCloseEnough " + isCloseEnough);
+//            Log.d("gyrodrive", "isFrontDistance " + isFrontDistance);
+//            Log.d("gyrodrive", "isTimeout " + isTimeout);
 
             lastHeading = angle;
         }
@@ -398,7 +405,7 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      */
     public void gyroHold(double speed, double angle, double holdTime) {
 
-        sleep((long) (holdTime*1000));
+        sleep((long) (holdTime * 1000));
 //        ElapsedTime holdTimer = new ElapsedTime();
 //
 //        // keep looping while we have time remaining.
@@ -494,12 +501,19 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
+    /**
+     * isSkyStone()
+     * Checks from distance sensor to deterimine if we are facing a skystone
+     * Currently ignores distance as that value is unreliable and is VERY forgiving of the color
+     * @return
+     */
     public boolean isSkystone() {
-        sleep(200);
+        sleep(100);
         double distance = robot.getForwardDistance();
         double color = robot.getForwardColor();
-        Log.d("isSkystone", "Distance="+distance+", Hue="+color);
-        return (color > 70);
+        boolean isMatch = (color >= SKYSTONE_HUE);
+        Log.d("isSkystone", isMatch + ", Distance=" + distance + ", Hue=" + color);
+        return isMatch;
     }
 
 

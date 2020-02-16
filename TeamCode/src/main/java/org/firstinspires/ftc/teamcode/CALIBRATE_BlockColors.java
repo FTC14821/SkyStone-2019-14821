@@ -33,11 +33,13 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "TEST Auto Drive", group = "TEST")
-public class TEST_AutoDrive extends LinearAutoGyroOpMode {
+@Autonomous(name = "CALIBRATE Block Colors", group = "TEST")
+public class CALIBRATE_BlockColors extends LinearAutoGyroOpMode {
 
     @Override
     public void runOpMode() {
+
+        DataSampler colorSamples = new DataSampler(10);
 
         initOpMode();
 
@@ -47,27 +49,16 @@ public class TEST_AutoDrive extends LinearAutoGyroOpMode {
             telemetry.update();
         }
 
-        double heading = 0;
-        heading=0; //start at this heading
-//        gyroDrive(DRIVE_SPEED, 36, heading, 10, 7);
-//        gyroHold(DRIVE_SPEED, heading, 1);
-//        scootAngle("left",90);
-        scoot("left");
-        gyroHold(DRIVE_SPEED, heading, 1);
-        scoot("left");
-//        scootAngle("left",75);
-        gyroHold(DRIVE_SPEED, heading, 1);
-        scoot("left");
-//        scootAngle("left",45);
-        gyroHold(DRIVE_SPEED, heading, 1);
-        scoot("left");
-//        scootAngle("left",30);
-        gyroHold(DRIVE_SPEED, heading, 1);
 
-        //
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-
+        while (!isStopRequested()) {
+            colorSamples.add(robot.getForwardColor());
+            telemetry.addData("Distance", "%,.2f", robot.getForwardDistance());
+            telemetry.addData("Average Color","%,.2f", colorSamples.avg);
+            telemetry.addData("BlockInRange", (robot.isBlockInRange() ? "YES" : "no"));
+            telemetry.addData("Yellow Block", (robot.isBlockColor() ? "Detected" : "---"));
+            telemetry.addData("Skystone", (isSkystone() ? "Detected" : "---"));
+            telemetry.update();
+        }
     }
 
 }

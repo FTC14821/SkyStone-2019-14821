@@ -123,12 +123,10 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 //                    robot.fangs.setPower(0);
                 }
 
-                telemetry.addData("front (left) (right)", String.format("(%,d) (%,d)", robot.leftFrontDrive.getCurrentPosition(), robot.rightFrontDrive.getCurrentPosition()));
-//                telemetry.addData("front (left) (right)", "("+robot.leftFrontDrive.getCurrentPosition()+") ("+robot.rightFrontDrive.getCurrentPosition()+")");
-                telemetry.addData("back  (left) (right)", "("+robot.leftBackDrive.getCurrentPosition()+") ("+robot.rightBackDrive.getCurrentPosition()+")");
-//                telemetry.addData("armPosition", );
-                telemetry.addData("Arm Index : Target : Position", robot.getArmIndex()+ " : "+ robot.armPositions[robot.armIndex] + " : " + robot.armRotate.getCurrentPosition());
-                telemetry.addData("Front Color/Distance Distance : Color", String.format ("%,.2f : %,.2f", robot.getForwardDistance(),robot.getForwardColor()));
+                telemetry.addData("front (left) (right)", "(%,d) (%,d)", robot.leftFrontDrive.getCurrentPosition(), robot.rightFrontDrive.getCurrentPosition());
+                telemetry.addData("back  (left) (right)","(%,d) (%,d)", robot.leftBackDrive.getCurrentPosition(), robot.rightBackDrive.getCurrentPosition());
+                telemetry.addData("Arm Index : Target : Position", "%,d : %,d : %,d",robot.getArmIndex(),robot.armPositions[robot.armIndex],robot.armRotate.getCurrentPosition());
+                telemetry.addData("Front Color/Distance Distance : Color", "%,.2f : %,.2f", robot.getForwardDistance(),robot.getForwardColor());
                 telemetry.addData("gripperPosition", robot.gripper.getPosition());
                 telemetry.addData("fangPosition", robot.fangs.getCurrentPosition());
                 telemetry.update();

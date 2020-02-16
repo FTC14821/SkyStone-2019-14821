@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -28,6 +29,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class CactusRobot {
 
     static final double MAX_VALID_DISTANCE = 20; //maximum valid distance from color/distance sensor
+    static final double BLOCK_HUE = 45; // yellow block color
+    static final int HUE_RANGE = 10; // how much the color can vary and still be in range
 
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
@@ -168,7 +171,7 @@ public class CactusRobot {
 
     public double getForwardDistance() {
         double reading = this.forwardDistance.getDistance(DistanceUnit.CM);
-        forwardSampledDistance.add((Double.isNaN(reading) || (reading > MAX_VALID_DISTANCE)) ? 999 : reading / 2);
+        forwardSampledDistance.add((Double.isNaN(reading) || (reading > MAX_VALID_DISTANCE)) ? MAX_VALID_DISTANCE : reading / 2);
         return forwardSampledDistance.avg;
 //        return (Double.isNaN(reading) || (reading > MAX_VALID_DISTANCE)) ? 999 : reading / 2;
     }
@@ -187,47 +190,85 @@ public class CactusRobot {
         return hsvValues[0];
     }
 
+    /**
+     * Check the block in front of us and return true if the color is in the range for the yellow bloock
+     *
+     * @return
+     */
     public boolean isBlockColor() {
-        return (getForwardDistance() < 10 && Math.abs(40 - this.getForwardColor()) <= 10);
+//        return (getForwardDistance() < 10 && Math.abs(40 - this.getForwardColor()) <= 10);
+        return (Math.abs(BLOCK_HUE - this.getForwardColor()) <= HUE_RANGE);
     }
 
+    /**
+     * is the block in range to pick up?
+     * @return true if close enough
+     */
     public boolean isBlockInRange() {
         return (getForwardDistance() <= 6);
     }
 
+    /**
+     * releaseBlock will move back depending on the arm position and then release the block
+     * TODO make this back up before opening gripper
+     */
     public void releaseBlock() {
         this.openGripper();
     }
 
+    /**
+     * initGripper initializes the gripper by setting to a starting position (more than just open)
+     * and also setting isGripperOpen to true
+     */
     public void initGripper() {
         gripper.setPosition(gripStartPosition);
         isGripperOpen = true;
     }
 
+    /**
+     * openGripper will open the gripper and set isGripperOpen to true
+     */
     public void openGripper() {
         gripper.setPosition(gripOpenPosition);
         isGripperOpen = true;
     }
 
+    /**
+     * closeGripper will close the gripper and set isGripperOpen to false
+     */
     public void closeGripper() {
         gripper.setPosition(gripClosePosition);
         isGripperOpen = false;
     }
 
+    /**
+     * isGripOpen returns whether the gripper thinks it is open or closed
+     * @return gripper open status (true=open)
+     */
     public boolean isGripOpen() {
         return isGripperOpen;
     }
 
+    /**
+     * this waits for the specified number of seconds by just looping with telemetry update
+     * @param seconds
+     */
     public void waitFor(double seconds) {
         ElapsedTime timeoutTimer = new ElapsedTime();
         timeoutTimer.reset();
 
         while (timeoutTimer.time() < seconds) {
-            telemetry.addData("Timer", timeoutTimer.time());
+//            telemetry.addData("Timer", timeoutTimer.time());
             telemetry.update();
         }
     }
 
+    /**
+     * initializeArmPosition() will attempt to move the arm to its lowest position
+     * by moving it up a little, then down until the encoders aren't moving anymore
+     * <p>The encoders keep reporting movement even when we're pretty close to done, so we check
+     * at different intervals and see if it's "not moving much"</p>
+     */
     public void initializeArmPosition() {
         double prevPosition;
         boolean stillMoving = true;
@@ -239,11 +280,15 @@ public class CactusRobot {
 
         armRotate.setPower(0);
         armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // move the arm up a little so we will always have some down movement
         armRotate.setPower(0.3);
         this.waitFor(0.25);
+        // stop and pause
         armRotate.setPower(0);
         this.waitFor(0.25);
+        // now start moving it down very slowly
         armRotate.setPower(-0.1);
 
         prevPosition = armRotate.getCurrentPosition();
@@ -260,8 +305,9 @@ public class CactusRobot {
                 nextSampleTime = timeoutTimer.time() + sampleInterval;
             }
         }
-        // back up a little bit to releive strain
         armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // back up a little bit to releive strain
         armRotate.setPower(.2);
         this.waitFor(0.25);
         armRotate.setPower(0);
@@ -273,6 +319,12 @@ public class CactusRobot {
         armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+    /**
+     * Reset any motor's encoder
+     * This doesn't work correctly for some reason, so we just put the steps in everywhere
+     * @deprecated
+     * @param theMotor
+     */
     public void resetMotorEncoder(DcMotor theMotor) {
         DcMotor.RunMode oldMode = theMotor.getMode();
 
@@ -282,6 +334,9 @@ public class CactusRobot {
         theMotor.setMode(oldMode);
     }
 
+    /**
+     * Close the fangs to grab the foundation
+     */
     public void closeFangs() {
 
         //true is down (biting)
@@ -292,6 +347,9 @@ public class CactusRobot {
 
     }
 
+    /**
+     * Open the fangs to let go of the foundation
+     */
     public void openFangs() {
         //true is down (biting)
         fangs.setTargetPosition(FANGS_UP_POSITION);
