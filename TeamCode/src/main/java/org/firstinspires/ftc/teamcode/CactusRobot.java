@@ -28,9 +28,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 public class CactusRobot {
 
-    static final double MAX_VALID_DISTANCE = 20; //maximum valid distance from color/distance sensor
-    static final double BLOCK_HUE = 45; // yellow block color
-    static final int HUE_RANGE = 10; // how much the color can vary and still be in range
+    private static final double MAX_VALID_DISTANCE = 20; //maximum valid distance from color/distance sensor
+    private static final double BLOCK_HUE = 45; // yellow block color
+    private static final int HUE_RANGE = 10; // how much the color can vary and still be in range
 
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
@@ -39,14 +39,12 @@ public class CactusRobot {
     public DcMotor armRotate = null;
     public DcMotor fangs = null;
     public Servo gripper = null;
-    public CRServo rightGripper = null;
 
     public ColorSensor forwardColor = null;
     public DistanceSensor forwardDistance = null;
     private DataSampler forwardSampledDistance = null;
 
     float hsvValues[] = {0F, 0F, 0F};       // hsvValues is an array that will hold the hue, saturation, and value information.
-    final float values[] = hsvValues;       // values is a reference to the hsvValues array.
 
     // sometimes it helps to multiply the raw RGB values with a scale factor
     // to amplify/attentuate the measured values.
@@ -182,7 +180,7 @@ public class CactusRobot {
 //        return Double.isNaN(reading) ? 999 : reading / 2;
     }
 
-    public double getForwardColor() {
+    double getForwardColor() {
         Color.RGBToHSV((int) (forwardColor.red() * SCALE_FACTOR),
                 (int) (forwardColor.green() * SCALE_FACTOR),
                 (int) (forwardColor.blue() * SCALE_FACTOR),
@@ -343,8 +341,6 @@ public class CactusRobot {
         fangs.setTargetPosition(FANGS_DOWN_POSITION);
         fangs.setPower(-0.3); //DOWN
         fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
     }
 
     /**

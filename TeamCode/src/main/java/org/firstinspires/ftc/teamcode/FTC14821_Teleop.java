@@ -9,14 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name = " 14821 Main Teleop", group = "ANY")
+@TeleOp(name = "14821 Main Teleop", group = "ANY")
 public class FTC14821_Teleop extends LinearGyroOpMode {
 
     RobotSettings settings = new RobotSettings();
 
     boolean bumperReleased;
     boolean armStickReleased = true;
-
 
     // State used for updating telemetry
     Orientation angles;
