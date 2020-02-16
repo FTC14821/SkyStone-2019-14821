@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Blue Two Skystones", group = "Blue")
+@Autonomous(name = "1 Blue Two Skystones", group = "BLUE")
 public class AutoBlueScoot extends LinearAutoGyroOpMode {
 
     @Override

@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "TEST Auto Drive", group = "TEST")
-public class AutoDriveTest extends LinearAutoGyroOpMode {
+public class TEST_AutoDrive extends LinearAutoGyroOpMode {
 
     @Override
     public void runOpMode() {

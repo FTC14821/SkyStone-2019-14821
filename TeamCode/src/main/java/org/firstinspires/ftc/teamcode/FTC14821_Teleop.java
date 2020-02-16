@@ -14,8 +14,6 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 
     RobotSettings settings = new RobotSettings();
 
-    double fangRelease;
-    double fangGrab;
     boolean bumperReleased;
     boolean armStickReleased = true;
 
@@ -34,20 +32,19 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
         boolean savingSettings = false;
         int absoluteArmPosition = 0;
 
-//        robot.init(hardwareMap);
+        initOpMode();
         /*
          * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
          * TODO Use the values from the settings object in the rest of our code
          */
-        settings.readSettings();
+
+        // don't read the settings file, just take the defaults
+//        settings.readSettings();
 
         bumperReleased = true;
-        fangRelease = 0.65;
-        fangGrab = 0;
 
         waitForStart();
         if (opModeIsActive()) {
-            initOpMode();
 
             // Put run blocks here.
             while (opModeIsActive()) {
@@ -119,13 +116,9 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                 }
 
                 if (gamepad2.y == true) {
-                    robot.fangs.setTargetPosition(FANGS_UP_POSITION);
-                    robot.fangs.setPower(0.3); //UP
-                    robot.fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.openFangs();
                 } else if (gamepad2.x == true) {
-                    robot.fangs.setTargetPosition(FANGS_DOWN_POSITION);
-                    robot.fangs.setPower(-0.2); //DOWN
-                    robot.fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.closeFangs();
                 } else {
 //                    robot.fangs.setPower(0);
                 }

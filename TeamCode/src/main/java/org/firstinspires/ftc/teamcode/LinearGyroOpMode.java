@@ -117,18 +117,12 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
     public double DRIVE_SPEED = 0.4;     // Nominal speed for better accuracy.
-    public double AUTO_DRIVE_FAST = .8;     // Nominal speed for better accuracy.
-    public double AUTO_DRIVE_SLOW = 0.6;     // Nominal speed for better accuracy.
     public double TURN_SPEED = 0.6;     // Nominal half speed for better accuracy.
-    public double AUTO_TURN_SPEED = 0.6;     // Nominal half speed for better accuracy.
 
     public double STRAIGHT_THRESHOLD = COUNTS_PER_MOTOR_REV * 0.03; // 1% of one rotation
     public double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
     public double P_TURN_COEFF = 0.02;     // Larger is more responsive, but also less stable
     public double P_DRIVE_COEFF = 0.02;     // Larger is more responsive, but also less stable
-
-    public int FANGS_UP_POSITION = 275;    // eg: Neverest 60
-    public int FANGS_DOWN_POSITION = 0;
 
     static public double HOLD = 0.4; //standard hold time to wait for things to finish
     //TODO - replace all the random hold times that are ~0.5 sec to use HOLD so we can tune as fast as possible
@@ -404,15 +398,16 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      */
     public void gyroHold(double speed, double angle, double holdTime) {
 
-        ElapsedTime holdTimer = new ElapsedTime();
-
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            telemetry.update();
-        }
+        sleep((long) (holdTime*1000));
+//        ElapsedTime holdTimer = new ElapsedTime();
+//
+//        // keep looping while we have time remaining.
+//        holdTimer.reset();
+//        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+//            // Update telemetry & Allow time for other processes to run.
+//            onHeading(speed, angle, P_TURN_COEFF);
+//            telemetry.update();
+//        }
 
         // Stop all motion;
         robot.leftFrontDrive.setPower(0);
@@ -500,68 +495,13 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     }
 
     public boolean isSkystone() {
-        return (robot.getForwardColor() > 100 && robot.getForwardDistance() < 15);
+        sleep(200);
+        double distance = robot.getForwardDistance();
+        double color = robot.getForwardColor();
+        Log.d("isSkystone", "Distance="+distance+", Hue="+color);
+        return (color > 70);
     }
 
-    public void scootAngle(String direction, double angle) {
-        double turnAngle = (Math.abs(angle) <= 90 && angle != 0) ? angle : 90; //default to 90
-        double minBack = 5; // minimum distance backwards to drive
-        double blockSize = 8; // width of the blocks
-
-        // calculate the distance backwards (dY) and alongthe hypotenuse (dH) for the angle we want to turn
-        // and avoid dividing by zero or infinity
-        double dY = (turnAngle != 90) ? Math.abs(blockSize / Math.tan(Math.toRadians(turnAngle))) : 0; //how far back to we have to go to get our mark
-        double dH = Math.abs(blockSize / Math.sin(Math.toRadians(turnAngle))); //already corrected for turnAngle > 0 so it's safe
-
-        if (direction.toLowerCase() == "right") {
-            turnAngle *= -1;
-        }
-
-        double originalHeading = lastHeading;
-        double heading = originalHeading;
-
-        // back up minBack + calculated distance
-        gyroDrive(AUTO_DRIVE_SLOW, -(minBack + dY), heading);
-
-        // turn to our designated angle
-        heading += turnAngle;
-        gyroTurn(AUTO_TURN_SPEED, heading);
-        gyroHold(AUTO_TURN_SPEED, heading, HOLD);
-
-        // drive on that heading for the hypotenuse
-        gyroDrive(AUTO_DRIVE_SLOW, dH, heading, 2);
-
-        // turn back to original heading
-        heading = originalHeading;
-        gyroTurn(AUTO_TURN_SPEED, heading);
-        gyroHold(AUTO_TURN_SPEED, heading, HOLD);
-
-        // now drive forward the minBack distance
-        gyroDrive(AUTO_DRIVE_SLOW, minBack, heading, 2, 6);
-    }
-
-
-    public void scoot(String direction) {
-
-        // can just replace with this really
-//        scootAngle(direction, 90);
-
-        double turnAngle = 90;
-        if (direction.toLowerCase() == "right") {
-            turnAngle *= -1;
-        }
-        double originalHeading = lastHeading;
-        double heading = originalHeading;
-
-        gyroDrive(AUTO_DRIVE_SLOW, -5, heading);
-        heading += turnAngle;
-        gyroTurn(AUTO_TURN_SPEED, heading);
-        gyroDrive(AUTO_DRIVE_SLOW, 8.0, heading, 1);
-        heading = originalHeading;
-        gyroTurn(AUTO_TURN_SPEED, heading);
-        gyroHold(AUTO_TURN_SPEED, heading, HOLD);
-        gyroDrive(AUTO_DRIVE_SLOW, 5, heading, 2, 6);
-    }
 
 }
 

@@ -53,7 +53,7 @@ public class CactusRobot {
     public DistanceSensor downDistance = null;
 
     //    public int[] armPositions = {0, 870, 1460, 2160};
-    public int[] armPositions = {50, 650, 1290, 1930};
+    public int[] armPositions = {50, 675, 1290, 1930};
     public double acceptableArmThumbPos = .20;
     public int armIndex = 0;
     public double armSpeed = .5;
@@ -62,6 +62,9 @@ public class CactusRobot {
     private static double gripOpenPosition = 0.1;   // optimal is 0.1 and closed at 0.55
     private static double gripClosePosition = 0.55;  //
     private boolean isGripperOpen;
+
+    public static int FANGS_UP_POSITION = 250;    // eg: Neverest 60
+    public static int FANGS_DOWN_POSITION = 0;
 
     HardwareMap hwMap = null;
     private Telemetry telemetry;
@@ -82,7 +85,7 @@ public class CactusRobot {
         forwardColor = hwMap.get(ColorSensor.class, "forwardColorDistance");
         forwardDistance = hwMap.get(DistanceSensor.class, "forwardColorDistance");
 
-        forwardSampledDistance = new DataSampler(5);
+        forwardSampledDistance = new DataSampler(3);
 
 //        downColor = hwMap.get(ColorSensor.class, "downColorDistance");
 //        downDistance = hwMap.get(DistanceSensor.class, "downColorDistance");
@@ -105,6 +108,7 @@ public class CactusRobot {
 
         fangs = hwMap.get(DcMotor.class, "fangMotor");
         fangs.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fangs.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         armRotate = hwMap.get(DcMotor.class, "armRotate");
         armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -276,5 +280,22 @@ public class CactusRobot {
         theMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         theMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         theMotor.setMode(oldMode);
+    }
+
+    public void closeFangs() {
+
+        //true is down (biting)
+        fangs.setTargetPosition(FANGS_DOWN_POSITION);
+        fangs.setPower(-0.3); //DOWN
+        fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+    }
+
+    public void openFangs() {
+        //true is down (biting)
+        fangs.setTargetPosition(FANGS_UP_POSITION);
+        fangs.setPower(0.3); //UP
+        fangs.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }

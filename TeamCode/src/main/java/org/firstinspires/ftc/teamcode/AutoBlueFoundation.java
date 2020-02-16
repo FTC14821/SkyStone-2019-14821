@@ -31,8 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "1 Red Two Skystones", group = "RED")
-public class AutoRedScoot extends LinearAutoGyroOpMode {
+@Autonomous(name = "2 Blue Foundation", group = "BLUE")
+public class AutoBlueFoundation extends LinearAutoGyroOpMode {
 
     @Override
     public void runOpMode() {
@@ -45,6 +45,6 @@ public class AutoRedScoot extends LinearAutoGyroOpMode {
             telemetry.update();
         }
 
-        autoTwoSkystones(Alliance.RED);
+        autoMoveFoundation(Alliance.BLUE);
     }
 }

@@ -25,8 +25,8 @@ public class RobotSettings {
 
     private final static String SETTINGS_FILE = "CactusRobotSettings.json";
     public int version = 1;  //version of this class
-    public double teleFastSpeed = 0.7;  //fast drive speed for teleOp
-    public double teleSlowSpeed = 0.4;  //slow drive speed for teleop
+    public double teleFastSpeed = 1;  //fast drive speed for teleOp
+    public double teleSlowSpeed = .5;  //slow drive speed for teleop
 
     public double autoDriveSpeed = 0.4; //drive speed for autonomous
     public double autoTurnSpeed = 0.3;  // turn speed for autonomous
