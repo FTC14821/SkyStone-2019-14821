@@ -31,8 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Blue Park on Bridge Line from Foundation Side", group = "BLUE")
-public class AutoLineBridgeBLUE extends LinearAutoGyroOpMode {
+@Autonomous(name = "Red Park on Bridge Line from Foundation Side", group = "X-RED")
+public class AutoRedBridgeLine extends LinearAutoGyroOpMode {
 
     @Override
     public void runOpMode() {
@@ -45,7 +45,7 @@ public class AutoLineBridgeBLUE extends LinearAutoGyroOpMode {
             telemetry.update();
         }
 
-        autoParkOnLineAtBridge(Alliance.BLUE);
+        autoParkOnLineAtBridge(Alliance.RED);
     }
 
 }

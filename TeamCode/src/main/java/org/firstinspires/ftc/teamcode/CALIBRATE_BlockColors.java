@@ -49,7 +49,7 @@ public class CALIBRATE_BlockColors extends LinearAutoGyroOpMode {
             telemetry.update();
         }
 
-
+        // keep running until timer or user stops us
         while (!isStopRequested()) {
             colorSamples.add(robot.getForwardColor());
             telemetry.addData("Distance", "%,.2f", robot.getForwardDistance());

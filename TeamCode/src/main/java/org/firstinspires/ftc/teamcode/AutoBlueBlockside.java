@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Blue Get First Block Only", group = "BLUE")
+@Autonomous(name = "Blue Get First Block Only", group = "X-BLUE")
 public class AutoBlueBlockside extends LinearAutoGyroOpMode {
 
     @Override
