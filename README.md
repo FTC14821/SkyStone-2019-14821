@@ -1,6 +1,20 @@
 ## FTC14821 Skystone 2019 robot team code
 
+This repository is the robot control software for FTC Team 14821, Cactus Intelligence Agency in Decatur, Georgia, USA for the 2019/2020 FTC season.
+
+### Structure
+#### CactusRobot class
+This implements the hardware specific elements of the robot.  Initialization of the mechanisms and explicit tasks (move arm, openGripper, etc).
+
+#### LinearGyroOpMode
+This extends the LinearOpMode class and implements the more complex mechanics of driving the robot, specifically the use of the IMU to allow the robot to turn to and drive at a specific heading.  Our TeleOp mode implements this class and our Autonomous modes implement an extension of it as well.
+
+#### LinearAutoGyroOpMode
+This is an extension of LinearGyroOpMode explicitly for use by our Autonomous modes.  It implements the high level tasks to be completed in Autonomous, each of which can do different things depending on our alliance color
+
+### Notes
 This repository was originally forked from https://github.com/FIRST-Tech-Challenge/SkyStone and then modified with the team specific code.
+
 
 Every once in awhile, do these steps in the Terminal
 ```
@@ -8,6 +22,7 @@ git add --all
 git commit -m "Some message about what changed"
 git push
 ```
+
 
 If, **AFTER A COMMIT AND PUSH** we need to add updates from the FIRST source back into our project, you can do it one of multiple ways that are documented at
 https://stackoverflow.com/questions/3903817/pull-new-updates-from-original-github-repository-into-forked-github-repository
