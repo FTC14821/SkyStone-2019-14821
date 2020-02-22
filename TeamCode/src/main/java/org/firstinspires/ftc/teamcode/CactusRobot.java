@@ -149,6 +149,10 @@ public class CactusRobot {
             this.waitFor(0.5);
             initGripper();
             this.waitFor(0.5);
+        } else {
+            armRotate.setPower(0);
+            armRotate.setTargetPosition(armPositions[0]);
+            armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
 

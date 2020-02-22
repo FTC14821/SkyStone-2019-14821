@@ -33,6 +33,11 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
 
         initOpMode(false);
 
+        /// this is terrible - it should be in cactus robot, but itis part
+//        robot.armRotate.setPower(0);
+//        robot.armRotate.setTargetPosition(robot.armPositions[0]);
+//        robot.armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         /*
          * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
          * TODO Use the values from the settings object in the rest of our code
@@ -73,6 +78,10 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
                 robot.leftFrontDrive.setPower(-(driveSpeedScale * gamepad1.left_stick_y));
                 robot.rightBackDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
                 robot.rightFrontDrive.setPower(-(driveSpeedScale * gamepad1.right_stick_y));
+
+                if (gamepad2.start) {
+                    robot.initializeArmPosition();
+                }
 
                 // negative moves UP
                 if (gamepad2.left_stick_y < -robot.acceptableArmThumbPos) {
