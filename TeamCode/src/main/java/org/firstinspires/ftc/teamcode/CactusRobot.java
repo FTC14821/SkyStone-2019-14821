@@ -78,7 +78,11 @@ public class CactusRobot {
         this.telemetry = telemetry;
     }
 
-    public void init(HardwareMap ahwMap) {
+//    public void init(HardwareMap ahwMap) {
+//        this.init(ahwMap, true);
+//    }
+
+    public void init(HardwareMap ahwMap, boolean isAutoMode) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -137,13 +141,15 @@ public class CactusRobot {
         // Define and initialize ALL installed servos.
         gripper = hwMap.get(Servo.class, "gripper");
 
-        openGripper();
-        initializeArmPosition();
-        moveArmToPosition(armIndex);
-        closeGripper();
-        this.waitFor(0.5);
-        initGripper();
-        this.waitFor(0.5);
+        if (isAutoMode) {
+            openGripper();
+            initializeArmPosition();
+            moveArmToPosition(armIndex);
+            closeGripper();
+            this.waitFor(0.5);
+            initGripper();
+            this.waitFor(0.5);
+        }
     }
 
     public int getArmIndex() {
@@ -200,6 +206,7 @@ public class CactusRobot {
 
     /**
      * is the block in range to pick up?
+     *
      * @return true if close enough
      */
     public boolean isBlockInRange() {
@@ -241,6 +248,7 @@ public class CactusRobot {
 
     /**
      * isGripOpen returns whether the gripper thinks it is open or closed
+     *
      * @return gripper open status (true=open)
      */
     public boolean isGripOpen() {
@@ -249,6 +257,7 @@ public class CactusRobot {
 
     /**
      * this waits for the specified number of seconds by just looping with telemetry update
+     *
      * @param seconds
      */
     public void waitFor(double seconds) {
@@ -320,8 +329,9 @@ public class CactusRobot {
     /**
      * Reset any motor's encoder
      * This doesn't work correctly for some reason, so we just put the steps in everywhere
-     * @deprecated
+     *
      * @param theMotor
+     * @deprecated
      */
     public void resetMotorEncoder(DcMotor theMotor) {
         DcMotor.RunMode oldMode = theMotor.getMode();

@@ -151,13 +151,18 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
         this.calcCountsPerInch();
     }
 
+    // by default, assume isAuto true
     public void initOpMode() {
+        this.initOpMode(true);
+    }
+
+    public void initOpMode(boolean isAuto) {
         /*
          * Initialize the standard drive system variables.
          * The init() method of the hardware class does most of the work here
          */
         Log.d("Constructor", "starting robot.init");
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, isAuto);
 
         telemetry.addData(">", "Calibrating IMU");    //
         telemetry.update();
@@ -352,7 +357,7 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
             robot.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            Log.d("gyroDrive","Exit Reason: " + (!isBusy ? "Motors Stopped, " : "")
+            Log.d("gyroDrive", "Exit Reason: " + (!isBusy ? "Motors Stopped, " : "")
                     + (isCloseEnough ? "Close Enough, " : "")
                     + (isFrontDistance ? "Front Distance Sensor, " : "")
                     + (isTimeout ? "Timeout" : ""));
@@ -387,6 +392,23 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
 
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF) && (timeoutTimer.time() < timeout)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
+        lastHeading = angle;
+    }
+
+    public void gyroForwardTurn(double speed, double angle) {
+        this.gyroForwardTurn(speed, angle, 10);
+    }
+
+    public void gyroForwardTurn(double speed, double angle, double timeout) {
+        ElapsedTime timeoutTimer = new ElapsedTime();
+        timeoutTimer.reset();
+
+        // restrict the onHeading turn to only drive wheels forward, never in reverse
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF, 0) && (timeoutTimer.time() < timeout)) {
             // Update telemetry & Allow time for other processes to run.
             telemetry.update();
         }
@@ -470,6 +492,54 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
     }
 
     /**
+     * Perform one cycle of closed loop heading control.
+     *
+     * @param speed    Desired speed of turn.
+     * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
+     *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                 If a relative angle is required, add/subtract from current heading.
+     * @param PCoeff   Proportional Gain coefficient
+     * @param minSpeed Minimum speed to use for steering.  If zero, then one side will never drive backward
+     * @return
+     */
+    boolean onHeading(double speed, double angle, double PCoeff, double minSpeed) {
+        double error;
+        double steer;
+        boolean onTarget = false;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        } else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed = speed * steer;
+            leftSpeed = -rightSpeed;
+        }
+        rightSpeed = Range.clip(rightSpeed, minSpeed, 1);
+        leftSpeed = Range.clip(leftSpeed, minSpeed, 1);
+
+        // Send desired speeds to motors.
+        robot.leftFrontDrive.setPower(leftSpeed);
+        robot.leftBackDrive.setPower(leftSpeed);
+        robot.rightFrontDrive.setPower(rightSpeed);
+        robot.rightBackDrive.setPower(rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    /**
      * getError determines the error between the target angle and the robot's current heading
      *
      * @param targetAngle Desired angle (relative to global reference established at last Gyro Reset).
@@ -505,6 +575,7 @@ public abstract class LinearGyroOpMode extends LinearOpMode {
      * isSkyStone()
      * Checks from distance sensor to deterimine if we are facing a skystone
      * Currently ignores distance as that value is unreliable and is VERY forgiving of the color
+     *
      * @return
      */
     public boolean isSkystone() {

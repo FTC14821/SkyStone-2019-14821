@@ -31,7 +31,8 @@ public class FTC14821_Teleop extends LinearGyroOpMode {
         boolean savingSettings = false;
         int absoluteArmPosition = 0;
 
-        initOpMode();
+        initOpMode(false);
+
         /*
          * THIS IS IMPORTANT!!! IT LOADS THE SETINGS FROM A FILE
          * TODO Use the values from the settings object in the rest of our code

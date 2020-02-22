@@ -11,6 +11,7 @@ package org.firstinspires.ftc.teamcode;
  */
 public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
 
+
     public enum Direction {
         LEFT, RIGHT
     }
@@ -23,6 +24,7 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
     public static int BLOCK_STOP_DISTANCE = 7;
     public static int BLOCKSIZE = 8;
 
+
     /**
      * Scoot to the left or right the distance of 1 block but at any angle not just 90 degrees
      * Back up so we don't bump into the block in front of us, with extra distance depending on our angle
@@ -31,8 +33,7 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
      * Turn back to the original heading
      * Drive forward, stopping if we get too close to a block (distance sensor)
      *
-     * @param direction   Which direction we should scoot
-     *
+     * @param direction Which direction we should scoot
      */
     public void scootAngle(Direction direction, double angle) {
         double turnAngle = (Math.abs(angle) <= 90 && angle != 0) ? Math.abs(angle) : 90; //default to 90
@@ -78,8 +79,7 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
      * Turn back to the original heading
      * Drive forward, stopping if we get too close to a block (distance sensor)
      *
-     * @param direction   Which direction we are scooting, LEFT or RIGHT
-     *
+     * @param direction Which direction we are scooting, LEFT or RIGHT
      */
     public void scoot(Direction direction) {
 
@@ -116,9 +116,8 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
      * a block that's against the wall anyhow
      * After delivering the second block, just back up to the line
      *
-     * @param color   Which alliance color we are, determines the direction for scooting and
-     *                turning to put the block on the other side
-     *
+     * @param color Which alliance color we are, determines the direction for scooting and
+     *              turning to put the block on the other side
      */
 
     public void autoTwoSkystones(Alliance color) {
@@ -132,7 +131,7 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         heading = 0; //start at this heading
         robot.openGripper();
         gyroDrive(AUTO_DRIVE_SLOW, 28, heading, 10, 10);
-        gyroDrive(AUTO_DRIVE_SLOW*0.75, 4, heading, 10, 10);
+        gyroDrive(AUTO_DRIVE_SLOW * 0.75, 4, heading, 10, 10);
         blockPosition = 0;
         while (!isSkystone() && blockPosition < 2) {
             scoot(scootDirection);
@@ -155,7 +154,7 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
 
         // now go  back and get next skystone
-        blockPosition = (blockPosition < 2) ? blockPosition+3 : 4;
+        blockPosition = (blockPosition < 2) ? blockPosition + 3 : 4;
 
         gyroDrive(AUTO_DRIVE_FAST, -(longDistance + blockPosition * BLOCKSIZE), heading, 10);
         robot.moveArmToPosition(0); //lower arm
@@ -164,7 +163,7 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
 
         //drive up to the next stone and start looking
-        gyroDrive(AUTO_DRIVE_SLOW*0.75, 8.0, heading, 2, 10);
+        gyroDrive(AUTO_DRIVE_SLOW * 0.75, 8.0, heading, 2, 10);
         robot.closeGripper();
         gyroHold(AUTO_DRIVE_SLOW, heading, 1); //wait for gripper to close
         robot.moveArmToPosition(1);
@@ -272,6 +271,10 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
      * @param color Which color our Alliance is
      */
     public void autoMoveFoundation(Alliance color) {
+        autoMoveFoundation(color, false);
+    }
+
+    public void autoMoveFoundation(Alliance color, boolean forwardOnly) {
         int turnDirection = (color == Alliance.BLUE) ? 1 : -1;
 
         double heading = 0;
@@ -283,9 +286,15 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         gyroDrive(AUTO_DRIVE_SLOW, -24, heading);
         robot.closeFangs();
         sleep(1000);
-        gyroDrive((AUTO_DRIVE_SLOW+AUTO_DRIVE_FAST)/2, 30, heading);
+        gyroDrive((AUTO_DRIVE_SLOW + AUTO_DRIVE_FAST) / 2, 30, heading);
         heading += 30 * turnDirection;
-        gyroTurn(AUTO_TURN_SPEED, heading, 5);
+        if (forwardOnly) {
+            // THIS WIL ONLY MOVE THE WHEELS FORWARD WHEN TURNING
+            gyroForwardTurn(AUTO_TURN_SPEED, heading, 10);
+        } else {
+            // THIS IS WHAT WE HAD ORIGINALLY
+            gyroTurn(AUTO_TURN_SPEED, heading, 5);
+        }
         robot.openFangs();
         heading += 60 * turnDirection;
         gyroTurn(AUTO_TURN_SPEED, heading, 3);
@@ -293,5 +302,4 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         robot.closeFangs();
         sleep(1000);
     }
-
 }
