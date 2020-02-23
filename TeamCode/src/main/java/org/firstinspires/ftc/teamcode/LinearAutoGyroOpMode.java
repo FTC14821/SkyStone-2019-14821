@@ -124,6 +124,8 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         double heading = 0;
         double blockPosition;
         double longDistance = 38;
+        double backDistance = 7;
+        double crossHeading = 84;
 
         Direction scootDirection = (color == Alliance.BLUE) ? Direction.RIGHT : Direction.LEFT;
         int turnDirection = (color == Alliance.BLUE) ? 1 : -1;
@@ -141,11 +143,11 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         gyroHold(AUTO_DRIVE_SLOW, heading, 1);
         robot.moveArmToPosition(1);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
-        gyroDrive(AUTO_DRIVE_SLOW, -8.0, heading, 1);
+        gyroDrive(AUTO_DRIVE_SLOW, -(backDistance), heading, 1);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
 
         // turn right and drive to the other side
-        heading = 90 * turnDirection;    //LEFT turn postive, RIGHT turn negative
+        heading = crossHeading * turnDirection;    //LEFT turn postive, RIGHT turn negative
         gyroTurn(AUTO_TURN_SPEED, heading);
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
         gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * BLOCKSIZE, heading, 10);
@@ -163,16 +165,16 @@ public abstract class LinearAutoGyroOpMode extends LinearGyroOpMode {
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
 
         //drive up to the next stone and start looking
-        gyroDrive(AUTO_DRIVE_SLOW * 0.75, 8.0, heading, 2, 10);
+        gyroDrive(AUTO_DRIVE_SLOW * 0.75, backDistance+3, heading, 2, 10);
         robot.closeGripper();
         gyroHold(AUTO_DRIVE_SLOW, heading, 1); //wait for gripper to close
         robot.moveArmToPosition(1);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
-        gyroDrive(AUTO_DRIVE_SLOW, -8.0, heading, 2);
+        gyroDrive(AUTO_DRIVE_SLOW, -backDistance, heading, 2);
         gyroHold(AUTO_DRIVE_SLOW, heading, HOLD);
 
         // turn right and drive to the other side
-        heading = 90 * turnDirection;    //LEFT turn postive, RIGHT turn negative
+        heading = crossHeading * turnDirection;    //LEFT turn postive, RIGHT turn negative
         gyroTurn(AUTO_TURN_SPEED, heading);
         gyroHold(AUTO_TURN_SPEED, heading, HOLD);
         gyroDrive(AUTO_DRIVE_FAST, longDistance + blockPosition * BLOCKSIZE, heading, 10);
